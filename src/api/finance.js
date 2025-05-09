@@ -23,3 +23,11 @@ export function platformList(params) {
       params
     })
 }
+
+export function allConsumeRecord(params) {
+    return request({
+      url: '/animal/finance/consumptionRecords/page',
+      method: 'get',
+      params
+    })
+}

@@ -76,31 +76,43 @@
             size="mini"
             border
           >
-            <el-table-column prop="id" label="消费记录编号" width="93" />
-            <el-table-column prop="date" label="消费日期" width="90" />
-            <el-table-column prop="accountId" label="账户编号" width="75" />
-            <el-table-column prop="handler" label="经手人" width="60" />
-            <el-table-column prop="amount" label="金额" width="60" />
-            <el-table-column prop="category" label="费用类别" width="75" />
-            <el-table-column prop="paymentMethod" label="结算方式" width="75" />
+            <el-table-column prop="id" label="消费记录编号" width="100" />
+            <el-table-column prop="purchase_time" label="消费日期" width="90">
+              <template slot-scope="scope">
+                {{ formatDate(scope.row.purchase_time) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="research_group_account_id" label="账户编号" width="80" />
+            <el-table-column prop="user_name" label="经手人" width="70" />
+            <el-table-column prop="amount" label="金额" width="70">
+              <template slot-scope="scope">
+                {{ scope.row.amount.toFixed(2) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="cost_classification" label="费用类别" width="80" />
+            <el-table-column prop="settlement_method" label="结算方式" width="80" />
             <el-table-column prop="remark" label="备注" width="80" />
             <el-table-column prop="status" label="状态标识" width="80">
               <template slot-scope="scope">
-                <el-tag :type="scope.row.status === '已完成' ? 'success' : 'warning'">{{
-                  scope.row.status
-                }}</el-tag>
+                <el-tag :type="scope.row.status === 1 ? 'success' : 'warning'">
+                  {{ scope.row.status === 1 ? '已完成' : '处理中' }}
+                </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="90" />
-            <el-table-column prop="creator" label="创建人" />
+            <el-table-column prop="create_time" label="创建时间" width="90">
+              <template slot-scope="scope">
+                {{ formatDate(scope.row.create_time) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="create_by" label="创建人" />
           </el-table>
           <el-pagination
             class="pagination"
             @size-change="handleConsumeSizeChange"
             @current-change="handleConsumeCurrentChange"
-            :current-page="consumeQuery.page"
+            :current-page="consumeQuery.pageNo"
             :page-sizes="[10, 20, 30, 50]"
-            :page-size="consumeQuery.size"
+            :page-size="consumeQuery.pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="consumeTotal"
             background
@@ -112,6 +124,7 @@
 </template>
 
 <script>
+import { allConsumeRecord } from '@/api/finance';
 export default {
   name: 'FinanceManage',
   data() {
@@ -182,60 +195,36 @@ export default {
       consumeLoading: false,
       consumeTotal: 120, // 总条数
       consumeQuery: {
-        page: 1, // 当前页码
-        size: 10 // 每页条数
+        pageNo: 1, // 当前页码
+        pageSize: 10 // 每页条数
       },
-      consumeRecords: [
-        {
-          id: 'C001',
-          date: '2023-06-02',
-          accountId: 'A001',
-          handler: '张三',
-          amount: '500.00',
-          category: '办公用品',
-          paymentMethod: '现金',
-          remark: '文具采购',
-          status: '已完成',
-          createTime: '2023-06-02',
-          creator: '李四'
-        },
-        {
-          id: 'C002',
-          date: '2023-06-08',
-          accountId: 'A002',
-          handler: '王五',
-          amount: '800.00',
-          category: '餐饮费',
-          paymentMethod: '微信支付',
-          remark: '团队餐费',
-          status: '已完成',
-          createTime: '2023-06-08',
-          creator: '赵六'
-        },
-        {
-          id: 'C003',
-          date: '2023-06-12',
-          accountId: 'A003',
-          handler: '赵六',
-          amount: '1200.00',
-          category: '交通费',
-          paymentMethod: '银行转账',
-          remark: '出差交通',
-          status: '处理中',
-          createTime: '2023-06-12',
-          creator: '李四'
-        }
-      ]
+      consumeRecords: []
     };
   },
   methods: {
+    // 格式化日期为 yy-mm-dd
+    formatDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const year = date
+        .getFullYear()
+        .toString()
+        .substr(2); // 获取年份后两位
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date
+        .getDate()
+        .toString()
+        .padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+
     // 消费记录分页方法
     handleConsumeSizeChange(val) {
-      this.consumeQuery.size = val;
+      this.consumeQuery.pageSize = val;
       this.fetchConsumeRecords();
     },
     handleConsumeCurrentChange(val) {
-      this.consumeQuery.page = val;
+      this.consumeQuery.pageNo = val;
       this.fetchConsumeRecords();
     },
 
@@ -262,14 +251,18 @@ export default {
     // 获取消费记录
     fetchConsumeRecords() {
       this.consumeLoading = true;
-      // 这里应该是实际的API调用，传入分页参数
-      // 示例：this.$api.finance.getConsumeRecords(this.consumeQuery).then(res => {
-      //   this.consumeRecords = res.data.records;
-      //   this.consumeTotal = res.data.total;
-      // })
-      setTimeout(() => {
-        this.consumeLoading = false;
-      }, 1000);
+      allConsumeRecord(this.consumeQuery)
+        .then(res => {
+          if (res.status === 1) {
+            this.consumeRecords = res.data.records;
+            this.consumeTotal = res.data.total;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .finally(() => {
+          this.consumeLoading = false;
+        });
     }
   },
   created() {
