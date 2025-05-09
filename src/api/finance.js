@@ -31,3 +31,12 @@ export function allConsumeRecord(params) {
       params
     })
 }
+
+//最近退款记录
+export function allRefundRecord(params) {
+    return request({
+      url: '/animal/finance/refundRecord/page',
+      method: 'get',
+      params
+    })
+}
