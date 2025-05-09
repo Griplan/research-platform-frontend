@@ -31,6 +31,16 @@ const financeManage = {
         node: 'finance_detail',
         activeClass: 'finance'
       }
+    },
+    {
+      path: '/finance-manage/bill',
+      name: 'financeBill',
+      component: () => import('@/views/admin/finance-manage/bill/index'),
+      meta: {
+        title: '账单管理',
+        node: 'finance_detail',
+        activeClass: 'finance'
+      }
     }
   ]
 }
