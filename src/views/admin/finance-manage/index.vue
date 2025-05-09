@@ -94,6 +94,17 @@
             <el-table-column prop="createTime" label="创建时间" width="90" />
             <el-table-column prop="creator" label="创建人" />
           </el-table>
+          <el-pagination
+            class="pagination"
+            @size-change="handleConsumeSizeChange"
+            @current-change="handleConsumeCurrentChange"
+            :current-page="consumeQuery.page"
+            :page-sizes="[10, 20, 30, 50]"
+            :page-size="consumeQuery.size"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="consumeTotal"
+            background
+          ></el-pagination>
         </div>
       </div>
     </div>
@@ -169,6 +180,11 @@ export default {
 
       // 消费记录数据
       consumeLoading: false,
+      consumeTotal: 120, // 总条数
+      consumeQuery: {
+        page: 1, // 当前页码
+        size: 10 // 每页条数
+      },
       consumeRecords: [
         {
           id: 'C001',
@@ -213,6 +229,16 @@ export default {
     };
   },
   methods: {
+    // 消费记录分页方法
+    handleConsumeSizeChange(val) {
+      this.consumeQuery.size = val;
+      this.fetchConsumeRecords();
+    },
+    handleConsumeCurrentChange(val) {
+      this.consumeQuery.page = val;
+      this.fetchConsumeRecords();
+    },
+
     // 获取付款记录
     fetchPaymentRecords() {
       this.paymentLoading = true;
@@ -236,8 +262,11 @@ export default {
     // 获取消费记录
     fetchConsumeRecords() {
       this.consumeLoading = true;
-      // 这里应该是实际的API调用
-      // 示例：this.$api.finance.getConsumeRecords().then(res => { ... })
+      // 这里应该是实际的API调用，传入分页参数
+      // 示例：this.$api.finance.getConsumeRecords(this.consumeQuery).then(res => {
+      //   this.consumeRecords = res.data.records;
+      //   this.consumeTotal = res.data.total;
+      // })
       setTimeout(() => {
         this.consumeLoading = false;
       }, 1000);
@@ -309,6 +338,11 @@ export default {
           height: 18px;
           line-height: 16px;
         }
+      }
+
+      .pagination {
+        margin-top: 15px;
+        text-align: center;
       }
     }
   }
