@@ -1,0 +1,301 @@
+<template>
+  <div class="app-container">
+    <div class="finance-content">
+      <div class="header-container">
+        <h2>账户管理</h2>
+        <div class="button-container">
+          <el-button type="primary" size="mini" icon="el-icon-circle-plus">新增</el-button>
+          <el-button type="primary" size="mini" icon="el-icon-search">查找</el-button>
+        </div>
+      </div>
+      <div class="table-container">
+        <el-table
+          :data="accountRecords"
+          :header-cell-style="{ background: '#fafafa', padding: '2px 0' }"
+          v-loading="accountLoading"
+          :cell-style="{ padding: '2px 0' }"
+          size="mini"
+          border
+        >
+          <el-table-column prop="accountId" label="账户编号" width="120" />
+          <el-table-column prop="accountName" label="账户名称" />
+          <el-table-column prop="creditLimit" label="可透支额度" width="120" sortable />
+          <el-table-column prop="balance" label="账户余额" width="120" sortable />
+          <el-table-column prop="frozenAmount" label="冻结金额" width="120" sortable />
+          <el-table-column prop="availableAmount" label="可消费总额" width="120" />
+          <el-table-column prop="memberName" label="所属会员" width="120" />
+          <el-table-column prop="createTime" label="创建时间" width="120" />
+          <el-table-column prop="updateTime" label="账户修改日期" width="120" />
+          <el-table-column prop="status" label="状态标识" width="80">
+            <template slot-scope="scope">
+              <el-tag
+                :type="
+                  scope.row.status === '正常'
+                    ? 'success'
+                    : scope.row.status === '冻结'
+                    ? 'danger'
+                    : 'warning'
+                "
+                >{{ scope.row.status }}</el-tag
+              >
+            </template>
+          </el-table-column>
+          <el-table-column label="编辑" width="120" fixed="right">
+            <template slot-scope="scope">
+              <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-edit-outline"
+                @click="handleEdit(scope.row)"
+                >编辑</el-button
+              >
+            </template>
+          </el-table-column>
+          <el-table-column label="禁用" width="120" fixed="right">
+            <template slot-scope="scope">
+              <el-button type="primary" size="mini" disabled icon="el-icon-circle-close"
+                >禁用</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          class="pagination"
+          @size-change="handleAccountSizeChange"
+          @current-change="handleAccountCurrentChange"
+          :current-page="accountQuery.page"
+          :page-sizes="[10, 20, 30, 50]"
+          :page-size="accountQuery.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="accountTotal"
+          background
+        ></el-pagination>
+      </div>
+      <div class="table-footer">
+        <div class="export-buttons">
+          <el-button type="success" size="mini" icon="el-icon-download">导出当前页</el-button>
+          <el-button type="warning" size="mini" icon="el-icon-download">导出所有</el-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 编辑账户对话框 -->
+    <edit-account
+      :visible.sync="editDialogVisible"
+      :account-data="currentAccount"
+      @submit="handleSubmit"
+      @close="handleDialogClose"
+    />
+  </div>
+</template>
+
+<script>
+import EditAccount from '@/components/editAccount.vue';
+
+export default {
+  name: 'AccountManage',
+  components: {
+    EditAccount
+  },
+  data() {
+    return {
+      // 账户数据
+      accountLoading: false,
+      accountTotal: 120, // 总条数
+      accountQuery: {
+        page: 1, // 当前页码
+        size: 10 // 每页条数
+      },
+      // 对话框控制
+      editDialogVisible: false,
+      currentAccount: {},
+      accountRecords: [
+        {
+          accountId: 'A001',
+          accountName: '研发部账户',
+          creditLimit: '10000.00',
+          balance: '25000.00',
+          frozenAmount: '0.00',
+          availableAmount: '35000.00',
+          memberName: '张三',
+          createTime: '2023-06-01',
+          updateTime: '2023-06-15',
+          status: '正常',
+          accountType: 'department',
+          remark: '研发部专用账户'
+        },
+        {
+          accountId: 'A002',
+          accountName: '市场部账户',
+          creditLimit: '5000.00',
+          balance: '15000.00',
+          frozenAmount: '1000.00',
+          availableAmount: '19000.00',
+          memberName: '李四',
+          createTime: '2023-05-15',
+          updateTime: '2023-06-10',
+          status: '正常',
+          accountType: 'department',
+          remark: '市场部专用账户'
+        },
+        {
+          accountId: 'A003',
+          accountName: '销售部账户',
+          creditLimit: '8000.00',
+          balance: '5000.00',
+          frozenAmount: '0.00',
+          availableAmount: '13000.00',
+          memberName: '王五',
+          createTime: '2023-04-20',
+          updateTime: '2023-06-08',
+          status: '冻结',
+          accountType: 'department',
+          remark: '销售部专用账户'
+        }
+      ]
+    };
+  },
+  methods: {
+    // 账户分页方法
+    handleAccountSizeChange(val) {
+      this.accountQuery.size = val;
+      this.fetchAccountRecords();
+    },
+    handleAccountCurrentChange(val) {
+      this.accountQuery.page = val;
+      this.fetchAccountRecords();
+    },
+
+    // 获取账户记录
+    fetchAccountRecords() {
+      this.accountLoading = true;
+      // 这里应该是实际的API调用，传入分页参数
+      // 示例：this.$api.finance.getAccountRecords(this.accountQuery).then(res => {
+      //   this.accountRecords = res.data.records;
+      //   this.accountTotal = res.data.total;
+      // })
+      setTimeout(() => {
+        this.accountLoading = false;
+      }, 1000);
+    },
+
+    // 处理编辑按钮点击
+    handleEdit(row) {
+      this.currentAccount = JSON.parse(JSON.stringify(row));
+      this.editDialogVisible = true;
+    },
+
+    // 处理表单提交
+    handleSubmit(formData) {
+      // 这里处理表单提交逻辑
+      console.log('提交的表单数据:', formData);
+      // 实际应用中这里应该调用API更新账户信息
+      // this.$api.finance.updateAccount(formData).then(res => {
+      //   if (res.code === 200) {
+      //     this.$message.success('更新成功');
+      //     this.fetchAccountRecords();
+      //   }
+      // })
+
+      // 模拟更新成功
+      this.$message.success('账户信息更新成功');
+      // 更新本地数据（实际应用中应该重新获取数据）
+      const index = this.accountRecords.findIndex(
+        item => item.accountId === this.currentAccount.accountId
+      );
+      if (index !== -1) {
+        this.accountRecords[index] = {
+          ...this.accountRecords[index],
+          ...formData
+        };
+      }
+    },
+
+    // 处理对话框关闭
+    handleDialogClose() {
+      this.currentAccount = {};
+    }
+  },
+  created() {
+    this.fetchAccountRecords();
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.app-container {
+  padding: 10px 30px;
+}
+h1 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+.table-footer {
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  .export-buttons {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+h2 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.finance-content {
+  display: flex;
+  flex-direction: column;
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .button-container {
+      display: flex;
+      gap: 10px;
+    }
+  }
+
+  .table-container {
+    width: 100%;
+    background-color: #fff;
+    padding: 15px;
+    border-top: 3px solid #4b7cb1;
+    border-left: 1px solid #f4f4f5;
+    border-right: 1px solid #f4f4f5;
+    border-bottom: 1px solid #f4f4f5;
+
+    :deep(.el-table) {
+      font-size: 11px;
+
+      th,
+      td {
+        padding: 2px;
+      }
+
+      .cell {
+        line-height: 16px;
+        padding-left: 2px;
+        padding-right: 2px;
+      }
+
+      .el-tag {
+        padding: 0 2px;
+        height: 18px;
+        line-height: 16px;
+      }
+    }
+
+    .pagination {
+      text-align: center;
+      margin-top: 15px;
+    }
+  }
+}
+</style>
