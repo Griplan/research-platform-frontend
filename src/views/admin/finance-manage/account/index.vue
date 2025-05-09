@@ -4,7 +4,13 @@
       <div class="header-container">
         <h2>账户管理</h2>
         <div class="button-container">
-          <el-button type="primary" size="mini" icon="el-icon-circle-plus">新增</el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-circle-plus"
+            @click="handleAddDialogOpen"
+            >新增</el-button
+          >
           <el-button type="primary" size="mini" icon="el-icon-search">查找</el-button>
         </div>
       </div>
@@ -86,16 +92,20 @@
       @submit="handleSubmit"
       @close="handleDialogClose"
     />
+    <!-- 新建 -->
+    <add-account v-if="addDialogVisible" @close="handleAddDialogClose" />
   </div>
 </template>
 
 <script>
-import EditAccount from '@/components/editAccount.vue';
+import EditAccount from './components/editAccount.vue';
+import AddAccount from './components/addAccount.vue';
 
 export default {
   name: 'AccountManage',
   components: {
-    EditAccount
+    EditAccount,
+    AddAccount
   },
   data() {
     return {
@@ -108,6 +118,7 @@ export default {
       },
       // 对话框控制
       editDialogVisible: false,
+      addDialogVisible: false,
       currentAccount: {},
       accountRecords: [
         {
@@ -189,6 +200,16 @@ export default {
     handleDialogClose() {
       this.currentAccount = {};
       this.editDialogVisible = false;
+    },
+
+    // 处理新建对话框关闭
+    handleAddDialogClose() {
+      this.addDialogVisible = false;
+    },
+
+    // 处理新增对话框打开
+    handleAddDialogOpen() {
+      this.addDialogVisible = true;
     }
   },
   created() {
