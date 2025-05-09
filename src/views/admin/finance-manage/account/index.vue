@@ -81,7 +81,7 @@
 
     <!-- 编辑账户对话框 -->
     <edit-account
-      :visible.sync="editDialogVisible"
+      v-if="editDialogVisible"
       :account-data="currentAccount"
       @submit="handleSubmit"
       @close="handleDialogClose"
@@ -185,35 +185,10 @@ export default {
       this.editDialogVisible = true;
     },
 
-    // 处理表单提交
-    handleSubmit(formData) {
-      // 这里处理表单提交逻辑
-      console.log('提交的表单数据:', formData);
-      // 实际应用中这里应该调用API更新账户信息
-      // this.$api.finance.updateAccount(formData).then(res => {
-      //   if (res.code === 200) {
-      //     this.$message.success('更新成功');
-      //     this.fetchAccountRecords();
-      //   }
-      // })
-
-      // 模拟更新成功
-      this.$message.success('账户信息更新成功');
-      // 更新本地数据（实际应用中应该重新获取数据）
-      const index = this.accountRecords.findIndex(
-        item => item.accountId === this.currentAccount.accountId
-      );
-      if (index !== -1) {
-        this.accountRecords[index] = {
-          ...this.accountRecords[index],
-          ...formData
-        };
-      }
-    },
-
     // 处理对话框关闭
     handleDialogClose() {
       this.currentAccount = {};
+      this.editDialogVisible = false;
     }
   },
   created() {

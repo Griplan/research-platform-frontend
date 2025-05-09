@@ -66,10 +66,6 @@
 export default {
   name: 'EditAccount',
   props: {
-    visible: {
-      type: Boolean,
-      default: false
-    },
     accountData: {
       type: Object,
       default: () => ({})
@@ -77,7 +73,7 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false,
+      dialogVisible: true,
       form: {
         memberName: '',
         accountType: '',
@@ -100,14 +96,6 @@ export default {
       }
     };
   },
-  watch: {
-    visible(val) {
-      this.dialogVisible = val;
-      if (val) {
-        this.initFormData();
-      }
-    }
-  },
   methods: {
     // 初始化表单数据
     initFormData() {
@@ -124,8 +112,6 @@ export default {
     },
     // 关闭对话框
     handleClose() {
-      this.$refs.accountForm && this.$refs.accountForm.resetFields();
-      this.$emit('update:visible', false);
       this.$emit('close');
     },
     // 提交表单
@@ -133,7 +119,6 @@ export default {
       this.$refs.accountForm.validate(valid => {
         if (valid) {
           // 提交表单数据
-          this.$emit('submit', this.form);
           this.handleClose();
         } else {
           return false;
