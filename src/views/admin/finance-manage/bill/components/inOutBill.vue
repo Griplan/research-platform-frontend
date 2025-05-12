@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header-container">
-      <h4>消费账单汇总</h4>
+      <h4>进出账单汇总</h4>
       <div class="button-container">
         <el-button size="mini" type="warning" icon="el-icon-edit-outline">入账所有账单</el-button>
         <el-button size="mini" icon="el-icon-search">查找</el-button>

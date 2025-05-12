@@ -16,7 +16,9 @@
       <el-tab-pane label="进出账单" name="fifth">
         <in-out-bill />
       </el-tab-pane>
-      <el-tab-pane label="技术服务账单" name="sixth">角色管理</el-tab-pane>
+      <el-tab-pane label="技术服务账单" name="sixth">
+        <tech-service-bill />
+      </el-tab-pane>
       <el-tab-pane label="预约账单" name="seventh">定时任务补偿</el-tab-pane>
     </el-tabs>
   </div>
@@ -28,13 +30,15 @@ import FacilityBill from './components/facilityBill.vue';
 import AnimalBill from './components/animalBill.vue';
 import FeedingBill from './components/feedingBill.vue';
 import InOutBill from './components/inOutBill.vue';
+import TechServiceBill from './components/techServiceBill.vue';
 export default {
   components: {
     ConsumeBill,
     FacilityBill,
     AnimalBill,
     FeedingBill,
-    InOutBill
+    InOutBill,
+    TechServiceBill
   },
   data() {
     return {

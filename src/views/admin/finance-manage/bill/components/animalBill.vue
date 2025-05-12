@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header-container">
-      <h4>消费账单汇总</h4>
+      <h4>动物账单汇总</h4>
       <div class="button-container">
         <el-button size="mini" icon="el-icon-search">查找</el-button>
       </div>
