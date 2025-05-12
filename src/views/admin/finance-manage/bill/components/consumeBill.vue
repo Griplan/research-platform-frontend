@@ -4,7 +4,13 @@
       <h4>消费账单汇总</h4>
       <div class="button-container">
         <el-button type="warning" size="mini" icon="el-icon-position">发送账单</el-button>
-        <el-button type="warning" size="mini" icon="el-icon-refresh-right">生成账单</el-button>
+        <el-button
+          type="warning"
+          size="mini"
+          icon="el-icon-refresh-right"
+          @click="showGenerateDialog"
+          >生成账单</el-button
+        >
         <el-button type="primary" size="mini" icon="el-icon-search">查找</el-button>
       </div>
     </div>
@@ -106,15 +112,26 @@
         background
       ></el-pagination>
     </div>
+    <!-- 生成账单对话框 -->
+    <generate-bill-dialog
+      v-if="generateDialogVisible"
+      @submit="handleGenerateBill"
+      @close="generateDialogVisible = false"
+    />
   </div>
 </template>
 
 <script>
+import GenerateBillDialog from './GenerateBillDialog.vue';
 export default {
   name: 'ConsumeBill',
+  components: {
+    GenerateBillDialog
+  },
   data() {
     return {
       loading: false,
+      generateDialogVisible: false,
       billList: [
         {
           id: 'BL001',
@@ -198,6 +215,9 @@ export default {
       setTimeout(() => {
         this.loading = false;
       }, 500);
+    },
+    showGenerateDialog() {
+      this.generateDialogVisible = true;
     },
     confirmBill(row) {
       this.$confirm('确认此账单信息?', '提示', {
