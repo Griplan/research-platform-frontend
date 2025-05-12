@@ -19,7 +19,9 @@
       <el-tab-pane label="技术服务账单" name="sixth">
         <tech-service-bill />
       </el-tab-pane>
-      <el-tab-pane label="预约账单" name="seventh">定时任务补偿</el-tab-pane>
+      <el-tab-pane label="预约账单" name="seventh">
+        <booking-bill />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -31,6 +33,7 @@ import AnimalBill from './components/animalBill.vue';
 import FeedingBill from './components/feedingBill.vue';
 import InOutBill from './components/inOutBill.vue';
 import TechServiceBill from './components/techServiceBill.vue';
+import BookingBill from './components/bookingBill.vue';
 export default {
   components: {
     ConsumeBill,
@@ -38,7 +41,8 @@ export default {
     AnimalBill,
     FeedingBill,
     InOutBill,
-    TechServiceBill
+    TechServiceBill,
+    BookingBill
   },
   data() {
     return {
