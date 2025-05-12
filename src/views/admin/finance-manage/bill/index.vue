@@ -7,7 +7,9 @@
       <el-tab-pane label="设施账单汇总" name="second">
         <facility-bill />
       </el-tab-pane>
-      <el-tab-pane label="动物账单" name="third">角色管理</el-tab-pane>
+      <el-tab-pane label="动物账单" name="third">
+        <animal-bill />
+      </el-tab-pane>
       <el-tab-pane label="饲养账单" name="fourth">定时任务补偿</el-tab-pane>
       <el-tab-pane label="进出账单" name="fifth">配置管理</el-tab-pane>
       <el-tab-pane label="技术服务账单" name="sixth">角色管理</el-tab-pane>
@@ -19,10 +21,12 @@
 <script>
 import ConsumeBill from './components/consumeBill.vue';
 import FacilityBill from './components/facilityBill.vue';
+import AnimalBill from './components/animalBill.vue';
 export default {
   components: {
     ConsumeBill,
-    FacilityBill
+    FacilityBill,
+    AnimalBill
   },
   data() {
     return {

@@ -11,7 +11,7 @@
           @click="showGenerateDialog"
           >生成账单</el-button
         >
-        <el-button type="primary" size="mini" icon="el-icon-search">查找</el-button>
+        <el-button size="mini" icon="el-icon-search">查找</el-button>
       </div>
     </div>
     <div class="table-container">
