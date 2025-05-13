@@ -71,6 +71,16 @@ const financeManage = {
         node: 'finance_detail',
         activeClass: 'finance'
       }
+    },
+    {
+      path: '/finance-manage/account-statement',
+      name: 'financeAccountStatement',
+      component: () => import('@/views/admin/finance-manage/accountStatement/index'),
+      meta: {
+        title: '账目流水',
+        node: 'finance_detail',
+        activeClass: 'finance'
+      }
     }
   ]
 }
