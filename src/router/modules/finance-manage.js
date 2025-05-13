@@ -61,6 +61,16 @@ const financeManage = {
         node: 'finance_detail',
         activeClass: 'finance'
       }
+    },
+    {
+      path: '/finance-manage/consume-record',
+      name: 'financeConsumeRecord',
+      component: () => import('@/views/admin/finance-manage/consumeRecord/index'),
+      meta: {
+        title: '消费记录',
+        node: 'finance_detail',
+        activeClass: 'finance'
+      }
     }
   ]
 }
