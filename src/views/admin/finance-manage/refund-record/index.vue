@@ -3,7 +3,9 @@
     <div class="header-container">
       <h4>退款记录</h4>
       <div class="button-container">
-        <el-button size="mini" icon="el-icon-plus" type="warning">新增</el-button>
+        <el-button size="mini" icon="el-icon-plus" type="warning" @click="showAddDialog"
+          >新增</el-button
+        >
         <el-button size="mini" icon="el-icon-search">查找</el-button>
       </div>
     </div>
@@ -76,15 +78,24 @@
         background
       ></el-pagination>
     </div>
+
+    <!-- 添加退款记录对话框 -->
+    <add-refund-record v-if="showDialog" @close="hideAddDialog" @success="handleAddSuccess" />
   </div>
 </template>
 
 <script>
+import AddRefundRecord from './components/addRefundRecord.vue';
+
 export default {
   name: 'RefundRecord',
+  components: {
+    AddRefundRecord
+  },
   data() {
     return {
       loading: false,
+      showDialog: false,
       recordList: [
         {
           id: 'RF20230001',
@@ -125,6 +136,18 @@ export default {
     };
   },
   methods: {
+    // 显示添加对话框
+    showAddDialog() {
+      this.showDialog = true;
+    },
+    // 隐藏添加对话框
+    hideAddDialog() {
+      this.showDialog = false;
+    },
+    // 添加成功处理
+    handleAddSuccess() {
+      this.fetchRecordList();
+    },
     handleSizeChange(val) {
       this.pagination.size = val;
       this.fetchRecordList();
