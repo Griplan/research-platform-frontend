@@ -7,7 +7,7 @@ const financeManage = {
   name: 'financeManage',
   meta: {
     title: '财务管理',
-    icon: 'finance',
+    icon: 'finance-manage',
     node: 'finance_detail',
     activeClass: 'finance'
   },
@@ -38,6 +38,26 @@ const financeManage = {
       component: () => import('@/views/admin/finance-manage/bill/index'),
       meta: {
         title: '账单管理',
+        node: 'finance_detail',
+        activeClass: 'finance'
+      }
+    },
+    {
+      path: '/finance-manage/pay-record',
+      name: 'financePayRecord',
+      component: () => import('@/views/admin/finance-manage/pay-record/index'),
+      meta: {
+        title: '支付记录',
+        node: 'finance_detail',
+        activeClass: 'finance'
+      }
+    },
+    {
+      path: '/finance-manage/refund-record',
+      name: 'financeRefundRecord',
+      component: () => import('@/views/admin/finance-manage/refund-record/index'),
+      meta: {
+        title: '退款记录',
         node: 'finance_detail',
         activeClass: 'finance'
       }

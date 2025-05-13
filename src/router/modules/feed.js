@@ -6,7 +6,7 @@ const feed = {
     redirect : '/admin/feed/feed_apply',
     meta:{
         title:'饲养繁育',
-        icon: 'apparatus',
+        icon: 'feeding',
         node : 'platform' ,
         activeClass: 'apparatus'
     },
