@@ -81,21 +81,29 @@
 
     <!-- 添加退款记录对话框 -->
     <add-refund-record v-if="showDialog" @close="hideAddDialog" @success="handleAddSuccess" />
+    <!-- 编辑退款记录对话框 -->
+    <edit-refund-record
+      v-if="showEditDialog"
+      @close="hideEditDialog"
+      @success="handleEditSuccess"
+    />
   </div>
 </template>
 
 <script>
 import AddRefundRecord from './components/addRefundRecord.vue';
-
+import EditRefundRecord from './components/editRefundRecord.vue';
 export default {
   name: 'RefundRecord',
   components: {
-    AddRefundRecord
+    AddRefundRecord,
+    EditRefundRecord
   },
   data() {
     return {
       loading: false,
       showDialog: false,
+      showEditDialog: false,
       recordList: [
         {
           id: 'RF20230001',
@@ -211,9 +219,12 @@ export default {
     },
     // 处理编辑
     handleEdit(row) {
-      this.$message.info(`编辑退款记录：${row.id}`);
-      // 这里应该跳转到编辑页面或打开编辑对话框
-      // this.$router.push(`/finance-manage/refund-record/edit/${row.id}`);
+      this.showEditDialog = true;
+      this.editRow = row;
+    },
+    // 隐藏编辑对话框
+    hideEditDialog() {
+      this.showEditDialog = false;
     },
     // 处理取消
     handleCancel(row) {
