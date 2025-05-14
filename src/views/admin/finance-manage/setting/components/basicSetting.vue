@@ -16,7 +16,9 @@
       </el-form-item>
       <el-form-item label="动物订单管理费系数">
         <el-input v-model="form.coefficient" class="keep-30" size="mini" />
-        <span class="text-gray">元/只/天</span>
+        <span class="text-gray"
+          >管理费&nbsp;=&nbsp;订单总额&nbsp;/&nbsp;系数&nbsp;-&nbsp;订单总额</span
+        >
       </el-form-item>
       <el-form-item label="欠费多少天禁用设施权限">
         <el-input v-model="form.days" class="keep-30" size="mini" />
