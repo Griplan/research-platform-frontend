@@ -91,6 +91,16 @@ const financeManage = {
         node: 'finance_detail',
         activeClass: 'finance'
       }
+    },
+    {
+      path: '/finance-manage/setting',
+      name: 'financeSetting',
+      component: () => import('@/views/admin/finance-manage/setting/index'),
+      meta: {
+        title: '应用设置',
+        node: 'finance_detail',
+        activeClass: 'finance'
+      }
     }
   ]
 }
