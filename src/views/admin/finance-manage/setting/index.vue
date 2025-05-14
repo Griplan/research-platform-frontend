@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" class="custom-tabs">
-      <el-tab-pane label="基础设置" name="first"> </el-tab-pane>
+      <el-tab-pane label="基础设置" name="first">
+        <BasicSetting />
+      </el-tab-pane>
       <el-tab-pane label="成本中心" name="second"> </el-tab-pane>
       <el-tab-pane label="费用分类" name="third"> </el-tab-pane>
       <el-tab-pane label="账单类型" name="fourth"> </el-tab-pane>
@@ -11,8 +13,11 @@
 </template>
 
 <script>
+import BasicSetting from './components/basicSetting.vue';
 export default {
-  components: {},
+  components: {
+    BasicSetting
+  },
   data() {
     return {
       activeName: 'first'
