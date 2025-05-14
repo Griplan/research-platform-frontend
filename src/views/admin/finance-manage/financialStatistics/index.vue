@@ -1,7 +1,49 @@
 <template>
   <div class="container">
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" class="custom-tabs">
-      <el-tab-pane label="基础统计" name="first"> </el-tab-pane>
+      <el-tab-pane label="基础统计" name="first">
+        <div>
+          <el-row :gutter="20">
+            <el-col :span="13">
+              <div class="statistics-card">
+                <div class="card-header">概况</div>
+                <div class="card-body">
+                  <el-form label-width="100px" size="small">
+                    <el-form-item label="总账户数" prop="totalAccounts">
+                      {{ statistics.totalAccounts }}
+                    </el-form-item>
+                    <el-form-item label="欠费账户数" prop="overdueAccounts">
+                      {{ statistics.overdueAccounts }}
+                    </el-form-item>
+                    <el-form-item label="付款总额" prop="totalPayment">
+                      {{ statistics.totalPayment }}
+                    </el-form-item>
+                    <el-form-item label="退款总额" prop="totalRefund">
+                      {{ statistics.totalRefund }}
+                    </el-form-item>
+                    <el-form-item label="消费总额" prop="totalConsumption">
+                      {{ statistics.totalConsumption }}
+                    </el-form-item>
+                  </el-form>
+                </div>
+              </div>
+            </el-col>
+            <el-col :span="11">
+              <div class="right-card">
+                <div class="statistics-card">
+                  <div class="card-header">付款统计</div>
+                </div>
+                <div class="statistics-card">
+                  <div class="card-header">财务统计</div>
+                </div>
+                <div class="statistics-card">
+                  <div class="card-header">收支统计</div>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </el-tab-pane>
       <el-tab-pane label="欠费统计" name="second">
         <div>
           <div class="header-container">
@@ -57,14 +99,6 @@
                     :disabled="!canEdit(scope.row)"
                   >
                     编辑
-                  </el-button>
-                  <el-button
-                    type="danger"
-                    size="mini"
-                    @click="handleCancel(scope.row)"
-                    :disabled="!canCancel(scope.row)"
-                  >
-                    取消
                   </el-button>
                 </template>
               </el-table-column>
@@ -140,7 +174,15 @@ export default {
         page: 1,
         size: 10
       },
-      total: 3
+      total: 3,
+      // 统计数据
+      statistics: {
+        totalAccounts: 25,
+        overdueAccounts: 3,
+        totalPayment: 256800.5,
+        totalRefund: 12500.0,
+        totalConsumption: 189650.75
+      }
     };
   },
   methods: {
@@ -208,30 +250,6 @@ export default {
       this.$message.info(`编辑消费记录：${row.id}`);
       // 这里应该跳转到编辑页面或打开编辑对话框
       // this.$router.push(`/finance-manage/consume-record/edit/${row.id}`);
-    },
-    // 处理取消
-    handleCancel(row) {
-      this.$confirm('确认取消该消费记录?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          // 这里应该是实际的API调用，取消消费记录
-          // this.$api.finance.cancelConsumeRecord(row.id).then(res => {
-          //   if (res.code === 200) {
-          //     this.$message.success('消费记录已取消');
-          //     this.fetchRecordList();
-          //   }
-          // });
-
-          // 模拟操作成功
-          row.status = 3; // 设置为已取消
-          this.$message.success('消费记录已取消');
-        })
-        .catch(() => {
-          this.$message.info('已取消操作');
-        });
     },
     // 判断是否可以编辑
     canEdit(row) {
@@ -359,5 +377,37 @@ export default {
     text-align: center;
     margin-top: 15px;
   }
+}
+.statistics-card {
+  background-color: #fff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  border-top: 3px solid #4b7cb1;
+  border-left: 1px solid #f4f4f5;
+  border-right: 1px solid #f4f4f5;
+  border-bottom: 1px solid #f4f4f5;
+
+  .card-header {
+    padding: 12px 15px;
+    background-color: #f5f7fa;
+    border-bottom: 1px solid #e4e7ed;
+    font-weight: bold;
+    color: #303133;
+    font-size: 15px;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  .statistics-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #409eff;
+  }
+}
+.right-card {
+  display: flex;
+  flex-direction: column;
 }
 </style>
