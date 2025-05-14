@@ -1,86 +1,7 @@
 <template>
   <div class="container">
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" class="custom-tabs">
-      <el-tab-pane label="基础统计" name="first">
-        <div>
-          <div class="header-container">
-            <h4>账户管理</h4>
-            <div class="button-container">
-              <el-button size="mini" icon="el-icon-search">查找</el-button>
-            </div>
-          </div>
-          <div class="table-container">
-            <el-table
-              :data="accountList"
-              :header-cell-style="{ background: '#fafafa', padding: '8px 0' }"
-              v-loading="loading"
-              border
-              size="small"
-              style="width: 100%"
-            >
-              <el-table-column prop="accountId" label="账户编号" width="110" />
-              <el-table-column prop="accountName" label="账户名称" width="120" />
-              <el-table-column prop="remark" label="备注" min-width="150" />
-              <el-table-column prop="creditLimit" label="可透支额度" sortable width="110">
-                <template slot-scope="scope">
-                  {{ scope.row.creditLimit.toFixed(2) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="balance" label="账户余额" sortable width="110">
-                <template slot-scope="scope">
-                  {{ scope.row.balance.toFixed(2) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="frozenAmount" label="冻结金额" sortable width="110">
-                <template slot-scope="scope">
-                  {{ scope.row.frozenAmount.toFixed(2) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="availableAmount" label="可消费总额" width="110">
-                <template slot-scope="scope">
-                  {{ scope.row.availableAmount.toFixed(2) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="createTime" label="创建时间" width="100">
-                <template slot-scope="scope">
-                  {{ formatDate(scope.row.createTime) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="updateTime" label="账户修改日期" width="120">
-                <template slot-scope="scope">
-                  {{ formatDate(scope.row.updateTime) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="status" label="状态标识" width="90">
-                <template slot-scope="scope">
-                  <el-tag :type="getAccountStatusType(scope.row.status)">
-                    {{ getAccountStatusText(scope.row.status) }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="100" fixed="right">
-                <template slot-scope="scope">
-                  <el-button type="primary" size="mini" @click="handleSend(scope.row)">
-                    发送
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-
-            <el-pagination
-              class="pagination"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="pagination.page"
-              :page-sizes="[10, 20, 30, 50]"
-              :page-size="pagination.size"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-              background
-            ></el-pagination>
-          </div>
-        </div>
-      </el-tab-pane>
+      <el-tab-pane label="基础统计" name="first"> </el-tab-pane>
       <el-tab-pane label="欠费统计" name="second">
         <div>
           <div class="header-container">
@@ -174,44 +95,6 @@ export default {
     return {
       activeName: 'first',
       loading: false,
-      accountList: [
-        {
-          accountId: 'ACC001',
-          accountName: '研究院主账户',
-          remark: '用于研究院日常运营',
-          creditLimit: 50000.0,
-          balance: 125000.0,
-          frozenAmount: 15000.0,
-          availableAmount: 160000.0, // balance + creditLimit - frozenAmount
-          createTime: '2023-01-15',
-          updateTime: '2023-10-20',
-          status: 1 // 1: 正常, 2: 冻结, 3: 停用
-        },
-        {
-          accountId: 'ACC002',
-          accountName: '科研专项账户',
-          remark: '用于专项科研资金管理',
-          creditLimit: 20000.0,
-          balance: 86000.0,
-          frozenAmount: 5000.0,
-          availableAmount: 101000.0,
-          createTime: '2023-02-20',
-          updateTime: '2023-09-15',
-          status: 1
-        },
-        {
-          accountId: 'ACC003',
-          accountName: '动物繁育账户',
-          remark: '用于动物繁育资金管理',
-          creditLimit: 10000.0,
-          balance: 34500.0,
-          frozenAmount: 8000.0,
-          availableAmount: 36500.0,
-          createTime: '2023-03-10',
-          updateTime: '2023-11-01',
-          status: 2
-        }
-      ],
       recordList: [
         {
           id: 'CR20230001',
