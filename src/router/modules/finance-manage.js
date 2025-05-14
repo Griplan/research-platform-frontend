@@ -81,6 +81,16 @@ const financeManage = {
         node: 'finance_detail',
         activeClass: 'finance'
       }
+    },
+    {
+      path: '/finance-manage/financial-statistics',
+      name: 'financeFinancialStatistics',
+      component: () => import('@/views/admin/finance-manage/financialStatistics/index'),
+      meta: {
+        title: '财务统计',
+        node: 'finance_detail',
+        activeClass: 'finance'
+      }
     }
   ]
 }
