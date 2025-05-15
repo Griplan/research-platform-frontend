@@ -9,7 +9,9 @@
       </el-tab-pane>
       <el-tab-pane label="费用分类" name="third"> </el-tab-pane>
       <el-tab-pane label="账单类型" name="fourth"> </el-tab-pane>
-      <el-tab-pane label="账户类型" name="fifth"> </el-tab-pane>
+      <el-tab-pane label="账户类型" name="fifth">
+        <AccountType />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -17,10 +19,12 @@
 <script>
 import BasicSetting from './components/basicSetting.vue';
 import CostCenter from './components/costCenter.vue';
+import AccountType from './components/accountType.vue';
 export default {
   components: {
     BasicSetting,
-    CostCenter
+    CostCenter,
+    AccountType
   },
   data() {
     return {

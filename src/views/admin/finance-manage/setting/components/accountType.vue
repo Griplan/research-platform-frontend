@@ -1,27 +1,28 @@
 <template>
   <div>
     <div class="header-container">
-      <h4>成本中心</h4>
+      <h4>应用设置</h4>
       <div class="button-container">
         <el-button size="mini" icon="el-icon-plus" type="warning">新增</el-button>
-        <el-button size="mini" icon="el-icon-search">查找</el-button>
       </div>
     </div>
     <div class="table-container">
       <el-table
-        :data="centerList"
+        :data="settingList"
         :header-cell-style="{ background: '#fafafa', padding: '8px 0' }"
         v-loading="loading"
         border
         size="small"
         style="width: 100%"
       >
-        <el-table-column prop="centerId" label="中心编号" width="120" />
-        <el-table-column prop="centerName" label="中心名称" width="150" />
-        <el-table-column prop="parentCenter" label="上级中心" width="150" />
-        <el-table-column prop="facilityId" label="关联设施" width="180" />
-        <el-table-column prop="description" label="中心描述" min-width="200" />
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column prop="note" label="备注" />
+        <el-table-column prop="creditLimit" label="可透支额度" width="240">
+          <template slot-scope="scope">
+            <span style="color: #457cb8">- ${{ scope.row.creditLimit }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="serialNumber" label="序号数字" width="240"> </el-table-column>
+        <el-table-column label="操作" width="200" fixed="right">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="handleEdit(scope.row)">
               编辑
@@ -51,34 +52,16 @@ export default {
   data() {
     return {
       loading: false,
-      centerList: [
+      settingList: [
         {
-          centerId: 'CC001',
-          centerName: '总成本中心',
-          parentCenter: '无',
-          facilityId: '主研究院',
-          description: '管理所有研究院财务的主要成本中心'
+          note: '通用账户',
+          creditLimit: '100000',
+          serialNumber: '1'
         },
         {
-          centerId: 'CC002',
-          centerName: '动物研究中心',
-          parentCenter: 'CC001',
-          facilityId: '动物研究设施',
-          description: '负责动物研究相关的财务管理'
-        },
-        {
-          centerId: 'CC003',
-          centerName: '实验室中心',
-          parentCenter: 'CC001',
-          facilityId: '主实验室设施',
-          description: '负责实验室研究与开发的财务管理'
-        },
-        {
-          centerId: 'CC004',
-          centerName: '行政后勤中心',
-          parentCenter: 'CC001',
-          facilityId: '行政大楼',
-          description: '负责行政后勤工作的财务管理'
+          note: '现金账户',
+          creditLimit: '100000',
+          serialNumber: '2'
         }
       ],
       pagination: {
