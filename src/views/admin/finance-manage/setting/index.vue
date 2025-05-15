@@ -8,7 +8,9 @@
         <CostCenter />
       </el-tab-pane>
       <el-tab-pane label="费用分类" name="third"> </el-tab-pane>
-      <el-tab-pane label="账单类型" name="fourth"> </el-tab-pane>
+      <el-tab-pane label="账单类型" name="fourth">
+        <BillType />
+      </el-tab-pane>
       <el-tab-pane label="账户类型" name="fifth">
         <AccountType />
       </el-tab-pane>
@@ -20,11 +22,13 @@
 import BasicSetting from './components/basicSetting.vue';
 import CostCenter from './components/costCenter.vue';
 import AccountType from './components/accountType.vue';
+import BillType from './components/billType.vue';
 export default {
   components: {
     BasicSetting,
     CostCenter,
-    AccountType
+    AccountType,
+    BillType
   },
   data() {
     return {
