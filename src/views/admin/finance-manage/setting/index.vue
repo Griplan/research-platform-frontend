@@ -7,7 +7,9 @@
       <el-tab-pane label="成本中心" name="second">
         <CostCenter />
       </el-tab-pane>
-      <el-tab-pane label="费用分类" name="third"> </el-tab-pane>
+      <el-tab-pane label="费用分类" name="third">
+        <CostSort />
+      </el-tab-pane>
       <el-tab-pane label="账单类型" name="fourth">
         <BillType />
       </el-tab-pane>
@@ -23,12 +25,14 @@ import BasicSetting from './components/basicSetting.vue';
 import CostCenter from './components/costCenter.vue';
 import AccountType from './components/accountType.vue';
 import BillType from './components/billType.vue';
+import CostSort from './components/costSort.vue';
 export default {
   components: {
     BasicSetting,
     CostCenter,
     AccountType,
-    BillType
+    BillType,
+    CostSort
   },
   data() {
     return {
