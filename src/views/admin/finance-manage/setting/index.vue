@@ -4,7 +4,9 @@
       <el-tab-pane label="基础设置" name="first">
         <BasicSetting />
       </el-tab-pane>
-      <el-tab-pane label="成本中心" name="second"> </el-tab-pane>
+      <el-tab-pane label="成本中心" name="second">
+        <CostCenter />
+      </el-tab-pane>
       <el-tab-pane label="费用分类" name="third"> </el-tab-pane>
       <el-tab-pane label="账单类型" name="fourth"> </el-tab-pane>
       <el-tab-pane label="账户类型" name="fifth"> </el-tab-pane>
@@ -14,9 +16,11 @@
 
 <script>
 import BasicSetting from './components/basicSetting.vue';
+import CostCenter from './components/costCenter.vue';
 export default {
   components: {
-    BasicSetting
+    BasicSetting,
+    CostCenter
   },
   data() {
     return {
