@@ -23,26 +23,34 @@
           size="mini"
           border
         >
-          <el-table-column prop="accountId" label="账户编号" width="120" />
-          <el-table-column prop="accountName" label="账户名称" />
-          <el-table-column prop="creditLimit" label="可透支额度" width="120" sortable />
-          <el-table-column prop="balance" label="账户余额" width="120" sortable />
-          <el-table-column prop="frozenAmount" label="冻结金额" width="120" sortable />
-          <el-table-column prop="availableAmount" label="可消费总额" width="120" />
-          <el-table-column prop="memberName" label="所属会员" width="120" />
-          <el-table-column prop="createTime" label="创建时间" width="120" />
-          <el-table-column prop="updateTime" label="账户修改日期" width="120" />
+          <el-table-column prop="id" label="账户编号" width="120" />
+          <el-table-column prop="name" label="账户名称" />
+          <el-table-column prop="debt_amount" label="可透支额度" width="120" sortable />
+          <el-table-column prop="inter_amount" label="账户余额" width="120" sortable />
+          <el-table-column prop="frozen_amount" label="冻结金额" width="120" sortable />
+          <el-table-column prop="amount" label="可消费总额" width="120" />
+          <el-table-column prop="creator_name" label="所属会员" width="120" />
+          <el-table-column prop="created_at" label="创建时间" width="120">
+            <template slot-scope="scope">
+              {{ formatDate(scope.row.created_at) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="updated_at" label="账户修改日期" width="120">
+            <template slot-scope="scope">
+              {{ formatDate(scope.row.updated_at) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="status" label="状态标识" width="80">
             <template slot-scope="scope">
               <el-tag
                 :type="
-                  scope.row.status === '正常'
+                  scope.row.status === '1'
                     ? 'success'
-                    : scope.row.status === '冻结'
+                    : scope.row.status === '0'
                     ? 'danger'
                     : 'warning'
                 "
-                >{{ scope.row.status }}</el-tag
+                >{{ scope.row.status === '1' ? '有效' : '无效' }}</el-tag
               >
             </template>
           </el-table-column>
@@ -100,6 +108,7 @@
 <script>
 import EditAccount from './components/editAccount.vue';
 import AddAccount from './components/addAccount.vue';
+import { allAccount } from '@/api/finance';
 
 export default {
   name: 'AccountManage',
@@ -111,7 +120,7 @@ export default {
     return {
       // 账户数据
       accountLoading: false,
-      accountTotal: 120, // 总条数
+      accountTotal: 0, // 总条数
       accountQuery: {
         page: 1, // 当前页码
         size: 10 // 每页条数
@@ -120,50 +129,7 @@ export default {
       editDialogVisible: false,
       addDialogVisible: false,
       currentAccount: {},
-      accountRecords: [
-        {
-          accountId: 'A001',
-          accountName: '研发部账户',
-          creditLimit: '10000.00',
-          balance: '25000.00',
-          frozenAmount: '0.00',
-          availableAmount: '35000.00',
-          memberName: '张三',
-          createTime: '2023-06-01',
-          updateTime: '2023-06-15',
-          status: '正常',
-          accountType: 'department',
-          remark: '研发部专用账户'
-        },
-        {
-          accountId: 'A002',
-          accountName: '市场部账户',
-          creditLimit: '5000.00',
-          balance: '15000.00',
-          frozenAmount: '1000.00',
-          availableAmount: '19000.00',
-          memberName: '李四',
-          createTime: '2023-05-15',
-          updateTime: '2023-06-10',
-          status: '正常',
-          accountType: 'department',
-          remark: '市场部专用账户'
-        },
-        {
-          accountId: 'A003',
-          accountName: '销售部账户',
-          creditLimit: '8000.00',
-          balance: '5000.00',
-          frozenAmount: '0.00',
-          availableAmount: '13000.00',
-          memberName: '王五',
-          createTime: '2023-04-20',
-          updateTime: '2023-06-08',
-          status: '冻结',
-          accountType: 'department',
-          remark: '销售部专用账户'
-        }
-      ]
+      accountRecords: []
     };
   },
   methods: {
@@ -180,14 +146,31 @@ export default {
     // 获取账户记录
     fetchAccountRecords() {
       this.accountLoading = true;
-      // 这里应该是实际的API调用，传入分页参数
-      // 示例：this.$api.finance.getAccountRecords(this.accountQuery).then(res => {
-      //   this.accountRecords = res.data.records;
-      //   this.accountTotal = res.data.total;
-      // })
-      setTimeout(() => {
-        this.accountLoading = false;
-      }, 1000);
+      allAccount(this.accountQuery)
+        .then(res => {
+          if (res.status === 200) {
+            this.accountRecords = res.data.data;
+            this.accountTotal = res.data.total;
+          }
+        })
+        .finally(() => {
+          this.accountLoading = false;
+        });
+    },
+    // 格式化日期为 yy-mm-dd
+    formatDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const year = date
+        .getFullYear()
+        .toString()
+        .substr(2); // 获取年份后两位
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date
+        .getDate()
+        .toString()
+        .padStart(2, '0');
+      return `${year}-${month}-${day}`;
     },
 
     // 处理编辑按钮点击

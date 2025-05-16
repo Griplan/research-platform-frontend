@@ -48,4 +48,22 @@ export function allPaymentRecord(params) {
       method: 'get',
       params
     })
-  }
+}
+
+//账户管理
+export function allAccount(params) {
+    return request({
+      url: '/research-group-account/list',
+      method: 'get',
+      params
+    })
+}
+
+//账单管理
+export function getClassifiedBill(params) {
+    return request({
+      url: '/animal/finance/bill/getClassifiedBill',
+      method: 'get',
+      params
+    })
+}
