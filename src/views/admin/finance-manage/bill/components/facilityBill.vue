@@ -27,16 +27,16 @@
         size="small"
         style="width: 100%"
       >
-        <el-table-column prop="title" label="账单标题" />
-        <el-table-column prop="centerName" label="中心名称" width="140" />
-        <el-table-column prop="startDate" label="开始日期" width="120">
+        <el-table-column prop="id" label="账单编号" width="140" />
+        <el-table-column prop="name" label="中心名称" />
+        <el-table-column prop="start_time" label="开始日期" width="120">
           <template slot-scope="scope">
-            {{ formatDate(scope.row.startDate) }}
+            {{ formatDate(scope.row.start_time) }}
           </template>
         </el-table-column>
-        <el-table-column prop="endDate" label="截止日期" width="120">
+        <el-table-column prop="end_time" label="截止日期" width="120">
           <template slot-scope="scope">
-            {{ formatDate(scope.row.endDate) }}
+            {{ formatDate(scope.row.end_time) }}
           </template>
         </el-table-column>
         <el-table-column prop="year" label="统计年份" width="90" />
@@ -44,17 +44,17 @@
         <el-table-column prop="month" label="统计月份" width="90" />
         <el-table-column prop="breedingFee" label="饲养费" width="120">
           <template slot-scope="scope">
-            {{ scope.row.breedingFee.toFixed(2) }}
+            {{ scope.row.breedingFee }}
           </template>
         </el-table-column>
         <el-table-column prop="inOutFee" label="进出费" width="120">
           <template slot-scope="scope">
-            {{ scope.row.inOutFee.toFixed(2) }}
+            {{ scope.row.inOutFee }}
           </template>
         </el-table-column>
         <el-table-column prop="overtimeFee" label="加班费" width="120">
           <template slot-scope="scope">
-            {{ scope.row.overtimeFee.toFixed(2) }}
+            {{ scope.row.overtimeFee }}
           </template>
         </el-table-column>
       </el-table>
@@ -63,9 +63,9 @@
         class="pagination"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pagination.page"
+        :current-page="pagination.pageNo"
         :page-sizes="[10, 20, 30, 50]"
-        :page-size="pagination.size"
+        :page-size="pagination.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         background
@@ -83,6 +83,7 @@
 
 <script>
 import GenerateBillDialog from './GenerateBillDialog.vue';
+import { getClassifiedBill } from '@/api/finance';
 
 export default {
   name: 'ConsumeBill',
@@ -98,50 +99,11 @@ export default {
         overtimeFee: 3000
       },
       loading: false,
-      billList: [
-        {
-          id: 'BL001',
-          title: '2023年第一季度账单',
-          centerName: '生物科学研究中心',
-          startDate: '2023-01-01',
-          endDate: '2023-03-31',
-          year: '2023',
-          quarter: 'Q1',
-          month: '1-3',
-          breedingFee: 8750.5,
-          inOutFee: 4300.25,
-          overtimeFee: 2150.0
-        },
-        {
-          id: 'BL002',
-          title: '2023年第二季度账单',
-          centerName: '生物科学研究中心',
-          startDate: '2023-04-01',
-          endDate: '2023-06-30',
-          year: '2023',
-          quarter: 'Q2',
-          month: '4-6',
-          breedingFee: 9200.5,
-          inOutFee: 5100.25,
-          overtimeFee: 2650.0
-        },
-        {
-          id: 'BL003',
-          title: '2023年第三季度账单',
-          centerName: '生物科学研究中心',
-          startDate: '2023-07-01',
-          endDate: '2023-09-30',
-          year: '2023',
-          quarter: 'Q3',
-          month: '7-9',
-          breedingFee: 9600.5,
-          inOutFee: 5400.25,
-          overtimeFee: 2800.0
-        }
-      ],
+      billList: [],
       pagination: {
-        page: 1,
-        size: 10
+        pageNo: 1,
+        pageSize: 10,
+        billType: '设施使用'
       },
       total: 3
     };
@@ -161,27 +123,25 @@ export default {
     },
 
     handleSizeChange(val) {
-      this.pagination.size = val;
+      this.pagination.pageSize = val;
       this.fetchBillList();
     },
     handleCurrentChange(val) {
-      this.pagination.page = val;
+      this.pagination.pageNo = val;
       this.fetchBillList();
     },
     fetchBillList() {
       this.loading = true;
-      // 这里应该是实际的API调用，获取账单列表数据
-      // this.$api.finance.getBillList(this.pagination).then(res => {
-      //   this.billList = res.data.records;
-      //   this.total = res.data.total;
-      // }).finally(() => {
-      //   this.loading = false;
-      // });
-
-      // 模拟数据加载
-      setTimeout(() => {
-        this.loading = false;
-      }, 500);
+      getClassifiedBill(this.pagination)
+        .then(res => {
+          if (res.status === 1) {
+            this.billList = res.data.records;
+            this.total = res.data.total;
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     confirmBill(row) {
       this.$confirm('确认此账单信息?', '提示', {
@@ -229,11 +189,14 @@ export default {
           this.$message.info('已取消操作');
         });
     },
-    // 格式化日期为 yyyy-mm-dd
+    // 格式化日期为 yy-mm-dd
     formatDate(dateString) {
       if (!dateString) return '';
       const date = new Date(dateString);
-      const year = date.getFullYear();
+      const year = date
+        .getFullYear()
+        .toString()
+        .substr(2); // 获取年份后两位
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const day = date
         .getDate()
