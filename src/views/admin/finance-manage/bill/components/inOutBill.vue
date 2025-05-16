@@ -57,9 +57,9 @@
         class="pagination"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pagination.page"
+        :current-page="pagination.pageNo"
         :page-sizes="[10, 20, 30, 50]"
-        :page-size="pagination.size"
+        :page-size="pagination.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         background
@@ -69,88 +69,42 @@
 </template>
 
 <script>
+import { getClassifiedBill } from '@/api/finance';
 export default {
   name: 'AnimalBill',
   data() {
     return {
       loading: false,
-      billList: [
-        {
-          id: 'BL001',
-          type: '动物账单',
-          title: '2023年第一季度账单',
-          startDate: '2023-01-01',
-          endDate: '2023-03-31',
-          year: '2023',
-          quarter: 'Q1',
-          centerId: '总成本中心',
-          month: '1-3',
-          amount: 12500.0,
-          createTime: '2023-04-05 09:25:30',
-          isRecorded: true,
-          operator: '张三'
-        },
-        {
-          id: 'BL002',
-          type: '动物账单',
-          title: '2023年第二季度账单',
-          startDate: '2023-04-01',
-          endDate: '2023-06-30',
-          year: '2023',
-          centerId: '总成本中心',
-          quarter: 'Q2',
-          month: '4-6',
-          amount: 13600.0,
-          createTime: '2023-07-05 10:15:20',
-          isRecorded: true,
-          operator: '李四'
-        },
-        {
-          id: 'BL003',
-          type: '动物账单',
-          title: '2023年第三季度账单',
-          startDate: '2023-07-01',
-          endDate: '2023-09-30',
-          year: '2023',
-          centerId: '总成本中心',
-          quarter: 'Q3',
-          month: '7-9',
-          amount: 14800.0,
-          createTime: '2023-10-05 14:30:45',
-          isRecorded: false,
-          operator: ''
-        }
-      ],
+      billList: [],
       pagination: {
-        page: 1,
-        size: 10
+        pageNo: 1,
+        pageSize: 10,
+        billType: '进出账单'
       },
       total: 3
     };
   },
   methods: {
     handleSizeChange(val) {
-      this.pagination.size = val;
+      this.pagination.pageSize = val;
       this.fetchBillList();
     },
     handleCurrentChange(val) {
-      this.pagination.page = val;
+      this.pagination.pageNo = val;
       this.fetchBillList();
     },
     fetchBillList() {
       this.loading = true;
-      // 这里应该是实际的API调用，获取账单列表数据
-      // this.$api.finance.getBillList(this.pagination).then(res => {
-      //   this.billList = res.data.records;
-      //   this.total = res.data.total;
-      // }).finally(() => {
-      //   this.loading = false;
-      // });
-
-      // 模拟数据加载
-      setTimeout(() => {
-        this.loading = false;
-      }, 500);
+      getClassifiedBill(this.pagination)
+        .then(res => {
+          if (res.status === 1) {
+            this.billList = res.data.records;
+            this.total = res.data.total;
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     // 格式化日期为 yyyy-mm-dd
     formatDate(dateString) {
