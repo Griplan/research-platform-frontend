@@ -33,10 +33,19 @@ export function allConsumeRecord(params) {
 }
 
 //最近退款记录
-export function allRefundRecord(params) {
+  export function allRefundRecord(params) {
+      return request({
+        url: '/animal/finance/refundRecord/page',
+        method: 'get',
+        params
+      })
+  }
+
+//最近的付款记录
+export function allPaymentRecord(params) {
     return request({
-      url: '/animal/finance/refundRecord/page',
+      url: '/animal/finance/payment/page',
       method: 'get',
       params
     })
-}
+  }

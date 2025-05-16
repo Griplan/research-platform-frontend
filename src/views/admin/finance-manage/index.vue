@@ -15,21 +15,29 @@
             border
           >
             <el-table-column prop="id" label="付款记录编号" width="100" />
-            <el-table-column prop="accountId" label="账户编号" />
-            <el-table-column prop="handler" label="经手人" width="60" />
+            <el-table-column prop="research_group_account_id" label="账户编号" />
+            <el-table-column prop="research_group_account" label="账户名称" width="60" />
             <el-table-column prop="amount" label="金额" width="90" />
-            <el-table-column prop="paymentMethod" label="支付方式" width="75" />
-            <el-table-column prop="paymentTime" label="到账时间" width="75" />
+            <el-table-column prop="pay_type" label="支付方式" width="75" />
+            <el-table-column prop="arrival_time" label="到账时间" width="75">
+              <template slot-scope="scope">
+                {{ formatDate(scope.row.arrival_time) }}
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" label="备注" width="80" />
             <el-table-column prop="status" label="状态标识" width="80">
               <template slot-scope="scope">
-                <el-tag :type="scope.row.status === '已完成' ? 'success' : 'warning'">{{
-                  scope.row.status
+                <el-tag :type="scope.row.status === '1' ? 'success' : 'warning'">{{
+                  scope.row.status === '1' ? '已入账' : '未入账'
                 }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="110" />
-            <el-table-column prop="creator" label="创建人" width="100" />
+            <el-table-column prop="create_time" label="创建时间" width="110">
+              <template slot-scope="scope">
+                {{ formatDate(scope.row.create_time) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="create_by" label="创建人" width="100" />
           </el-table>
         </div>
 
@@ -46,19 +54,27 @@
             border
           >
             <el-table-column prop="id" label="退款编号" width="80" />
-            <el-table-column prop="date" label="退款日期" width="75" />
-            <el-table-column prop="accountId" label="账户编号" width="75" />
+            <el-table-column prop="refund_time" label="退款日期" width="75">
+              <template slot-scope="scope">
+                {{ formatDate(scope.row.refund_time) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="research_group_account_id" label="账户编号" width="75" />
             <el-table-column prop="amount" label="金额" width="60" />
             <el-table-column prop="remark" label="备注" />
             <el-table-column prop="status" label="状态标识" width="80">
               <template slot-scope="scope">
-                <el-tag :type="scope.row.status === '已完成' ? 'success' : 'warning'">{{
-                  scope.row.status
+                <el-tag :type="scope.row.status === '1' ? 'success' : 'warning'">{{
+                  scope.row.status === '1' ? '已入账' : '未入账'
                 }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="110" />
-            <el-table-column prop="creator" label="创建人" width="100" />
+            <el-table-column prop="create_time" label="创建时间" width="110">
+              <template slot-scope="scope">
+                {{ formatDate(scope.row.create_time) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="create_by" label="创建人" width="100" />
           </el-table>
         </div>
       </div>
@@ -76,7 +92,7 @@
             size="mini"
             border
           >
-            <el-table-column prop="id" label="消费记录编号" width="100" />
+            <el-table-column prop="id" label="编号" width="60" />
             <el-table-column prop="purchase_time" label="消费日期" width="90">
               <template slot-scope="scope">
                 {{ formatDate(scope.row.purchase_time) }}
@@ -91,11 +107,10 @@
             </el-table-column>
             <el-table-column prop="cost_classification" label="费用类别" width="80" />
             <el-table-column prop="settlement_method" label="结算方式" width="80" />
-            <el-table-column prop="remark" label="备注" width="80" />
             <el-table-column prop="status" label="状态标识" width="80">
               <template slot-scope="scope">
                 <el-tag :type="scope.row.status === 1 ? 'success' : 'warning'">
-                  {{ scope.row.status === 1 ? '已完成' : '处理中' }}
+                  {{ scope.row.status === 1 ? '已入账' : '未入账' }}
                 </el-tag>
               </template>
             </el-table-column>
@@ -124,72 +139,18 @@
 </template>
 
 <script>
-import { allConsumeRecord } from '@/api/finance';
+import { allConsumeRecord, allPaymentRecord, allRefundRecord } from '@/api/finance';
 export default {
   name: 'FinanceManage',
   data() {
     return {
       // 付款记录数据
       paymentLoading: false,
-      paymentRecords: [
-        {
-          id: 'P001',
-          date: '2023-06-01',
-          accountId: 'A001',
-          handler: '张三',
-          amount: '5000.00',
-          category: '设备采购',
-          paymentMethod: '银行转账',
-          remark: '实验室设备',
-          status: '已完成',
-          createTime: '2023-06-01',
-          creator: '李四'
-        },
-        {
-          id: 'P002',
-          date: '2023-06-05',
-          accountId: 'A002',
-          handler: '王五',
-          amount: '3000.00',
-          category: '耗材采购',
-          paymentMethod: '现金',
-          remark: '实验室耗材',
-          status: '处理中',
-          createTime: '2023-06-05',
-          creator: '赵六'
-        }
-      ],
+      paymentRecords: [],
 
       // 退款记录数据
       refundLoading: false,
-      refundRecords: [
-        {
-          id: 'R001',
-          date: '2023-06-10',
-          accountId: 'A001',
-          handler: '张三',
-          amount: '1000.00',
-          category: '设备维修',
-          paymentMethod: '银行转账',
-          remark: '设备故障退款',
-          status: '已完成',
-          createTime: '2023-06-10',
-          creator: '李四'
-        },
-        {
-          id: 'R002',
-          date: '2023-06-15',
-          accountId: 'A003',
-          handler: '王五',
-          amount: '2000.00',
-          category: '服务费',
-          paymentMethod: '现金',
-          remark: '服务质量问题',
-          status: '处理中',
-          createTime: '2023-06-15',
-          creator: '赵六'
-        }
-      ],
+      refundRecords: [],
 
       // 消费记录数据
       consumeLoading: false,
@@ -231,21 +192,29 @@ export default {
     // 获取付款记录
     fetchPaymentRecords() {
       this.paymentLoading = true;
-      // 这里应该是实际的API调用
-      // 示例：this.$api.finance.getPaymentRecords().then(res => { ... })
-      setTimeout(() => {
-        this.paymentLoading = false;
-      }, 1000);
+      allPaymentRecord({ pageNo: 1, pageSize: 10 })
+        .then(res => {
+          if (res.status === 1) {
+            this.paymentRecords = res.data.records;
+          }
+        })
+        .finally(() => {
+          this.paymentLoading = false;
+        });
     },
 
     // 获取退款记录
     fetchRefundRecords() {
       this.refundLoading = true;
-      // 这里应该是实际的API调用
-      // 示例：this.$api.finance.getRefundRecords().then(res => { ... })
-      setTimeout(() => {
-        this.refundLoading = false;
-      }, 1000);
+      allRefundRecord({ pageNo: 1, pageSize: 10 })
+        .then(res => {
+          if (res.status === 1) {
+            this.refundRecords = res.data.records;
+          }
+        })
+        .finally(() => {
+          this.refundLoading = false;
+        });
     },
 
     // 获取消费记录
