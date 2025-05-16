@@ -103,9 +103,9 @@
         class="pagination"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pagination.page"
+        :current-page="pagination.pageNo"
         :page-sizes="[10, 20, 30, 50]"
-        :page-size="pagination.size"
+        :page-size="pagination.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         background
@@ -115,88 +115,41 @@
 </template>
 
 <script>
+import { getPaymentRecord } from '@/api/finance';
 export default {
   name: 'PayRecord',
   data() {
     return {
       loading: false,
-      recordList: [
-        {
-          id: 'PAY20230001',
-          accountId: 'ACC001',
-          handler: '张三',
-          amount: 12500.0,
-          payMethod: '银行转账',
-          invoiceUrl: 'https://example.com/invoice/001.pdf',
-          invoiceDate: '2023-04-01',
-          invoiceImg: 'https://example.com/invoice/001.jpg',
-          receivedTime: '2023-04-05',
-          remark: '第一季度账单付款',
-          status: 1, // 1: 已付款, 2: 待付款, 3: 已取消
-          createTime: '2023-03-30',
-          creator: '李四'
-        },
-        {
-          id: 'PAY20230002',
-          accountId: 'ACC002',
-          handler: '王五',
-          amount: 8600.0,
-          payMethod: '支付宝',
-          invoiceUrl: '',
-          invoiceDate: '',
-          invoiceImg: '',
-          receivedTime: '2023-07-08',
-          remark: '二季度设备费',
-          status: 1, // 1: 已付款, 2: 待付款, 3: 已取消
-          createTime: '2023-07-05',
-          creator: '赵六'
-        },
-        {
-          id: 'PAY20230003',
-          accountId: 'ACC003',
-          handler: '钱七',
-          amount: 15800.0,
-          payMethod: '微信支付',
-          invoiceUrl: 'https://example.com/invoice/003.pdf',
-          invoiceDate: '2023-10-02',
-          invoiceImg: 'https://example.com/invoice/003.jpg',
-          receivedTime: '',
-          remark: '三季度运营费用',
-          status: 2, // 1: 已付款, 2: 待付款, 3: 已取消
-          createTime: '2023-10-01',
-          creator: '孙八'
-        }
-      ],
+      recordList: [],
       pagination: {
-        page: 1,
-        size: 10
+        pageNo: 1,
+        pageSize: 10
       },
       total: 3
     };
   },
   methods: {
     handleSizeChange(val) {
-      this.pagination.size = val;
+      this.pagination.pageSize = val;
       this.fetchRecordList();
     },
     handleCurrentChange(val) {
-      this.pagination.page = val;
+      this.pagination.pageNo = val;
       this.fetchRecordList();
     },
     fetchRecordList() {
       this.loading = true;
-      // 这里应该是实际的API调用，获取付款记录列表数据
-      // this.$api.finance.getPayRecordList(this.pagination).then(res => {
-      //   this.recordList = res.data.records;
-      //   this.total = res.data.total;
-      // }).finally(() => {
-      //   this.loading = false;
-      // });
-
-      // 模拟数据加载
-      setTimeout(() => {
-        this.loading = false;
-      }, 500);
+      getPaymentRecord(this.pagination)
+        .then(res => {
+          if (res.status === 1) {
+            this.recordList = res.data.records;
+            this.total = res.data.total;
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     // 格式化日期为 yyyy-mm-dd
     formatDate(dateString) {

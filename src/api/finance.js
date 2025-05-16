@@ -76,3 +76,12 @@ export function getConsumeBill(params) {
       params
     })
 }
+
+//付款记录
+export function getPaymentRecord(params) {
+    return request({
+      url: '/animal/finance/payment/page',
+      method: 'get',
+      params
+    })
+}
