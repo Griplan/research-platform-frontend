@@ -24,42 +24,50 @@
         style="width: 100%"
       >
         <el-table-column prop="id" label="汇总编号" width="90" />
-        <el-table-column prop="title" label="账单标题" width="140" />
-        <el-table-column prop="startDate" label="开始日期" width="100" />
+        <el-table-column prop="name" label="账单标题" width="140" />
+        <el-table-column prop="start_time" label="开始日期" width="100">
+          <template slot-scope="scope">
+            {{ formatDate(scope.row.start_time) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="year" label="统计年份" width="90" />
         <el-table-column prop="quarter" label="统计季度" width="90" />
         <el-table-column prop="month" label="统计月份" width="90" />
-        <el-table-column prop="animalFee" label="动物费" sortable width="100">
+        <el-table-column prop="animal_cost" label="动物费" sortable width="100">
           <template slot-scope="scope">
-            {{ scope.row.animalFee.toFixed(2) }}
+            {{ scope.row.animal_cost }}
           </template>
         </el-table-column>
-        <el-table-column prop="breedingFee" label="饲养费" sortable width="100">
+        <el-table-column prop="care_cost" label="饲养费" sortable width="100">
           <template slot-scope="scope">
-            {{ scope.row.breedingFee.toFixed(2) }}
+            {{ scope.row.care_cost }}
           </template>
         </el-table-column>
-        <el-table-column prop="inOutFee" label="进出费" sortable width="100">
+        <el-table-column prop="access_cost" label="进出费" sortable width="100">
           <template slot-scope="scope">
-            {{ scope.row.inOutFee.toFixed(2) }}
+            {{ scope.row.access_cost }}
           </template>
         </el-table-column>
-        <el-table-column prop="overtimeFee" label="加班费" sortable width="100">
+        <el-table-column prop="overtime_cost" label="加班费" sortable width="100">
           <template slot-scope="scope">
-            {{ scope.row.overtimeFee.toFixed(2) }}
+            {{ scope.row.overtime_cost }}
           </template>
         </el-table-column>
-        <el-table-column prop="serviceFee" label="技术服务费" sortable width="110">
+        <el-table-column prop="tech_cost" label="技术服务费" sortable width="110">
           <template slot-scope="scope">
-            {{ scope.row.serviceFee.toFixed(2) }}
+            {{ scope.row.tech_cost }}
           </template>
         </el-table-column>
-        <el-table-column prop="otherFee" label="其他费用" sortable width="100">
+        <el-table-column prop="extra_cost" label="其他费用" sortable width="100">
           <template slot-scope="scope">
-            {{ scope.row.otherFee.toFixed(2) }}
+            {{ scope.row.extra_cost }}
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="100" />
+        <el-table-column prop="create_time" label="创建时间" width="100">
+          <template slot-scope="scope">
+            {{ formatDate(scope.row.create_time) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="isConfirmed" label="账单已确认" width="100">
           <template slot-scope="scope">
             <el-tag :type="scope.row.isConfirmed ? 'success' : 'info'">
@@ -104,9 +112,9 @@
         class="pagination"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pagination.page"
+        :current-page="pagination.pageNo"
         :page-sizes="[10, 20, 30, 50]"
-        :page-size="pagination.size"
+        :page-size="pagination.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         background
@@ -123,6 +131,7 @@
 
 <script>
 import GenerateBillDialog from './GenerateBillDialog.vue';
+import { getConsumeBill } from '@/api/finance';
 export default {
   name: 'ConsumeBill',
   components: {
@@ -132,92 +141,54 @@ export default {
     return {
       loading: false,
       generateDialogVisible: false,
-      billList: [
-        {
-          id: 'BL001',
-          title: '2023年第一季度账单',
-          startDate: '2023-01-01',
-          year: '2023',
-          quarter: 'Q1',
-          month: '1-3',
-          animalFee: 12500.0,
-          breedingFee: 8750.5,
-          inOutFee: 4300.25,
-          overtimeFee: 2150.0,
-          serviceFee: 9800.75,
-          otherFee: 1500.0,
-          createTime: '2023-04-05',
-          isConfirmed: true,
-          isSent: true
-        },
-        {
-          id: 'BL002',
-          title: '2023年第二季度账单',
-          startDate: '2023-04-01',
-          year: '2023',
-          quarter: 'Q2',
-          month: '4-6',
-          animalFee: 13600.0,
-          breedingFee: 9200.5,
-          inOutFee: 5100.25,
-          overtimeFee: 2650.0,
-          serviceFee: 10500.75,
-          otherFee: 1800.0,
-          createTime: '2023-07-05',
-          isConfirmed: true,
-          isSent: false
-        },
-        {
-          id: 'BL003',
-          title: '2023年第三季度账单',
-          startDate: '2023-07-01',
-          year: '2023',
-          quarter: 'Q3',
-          month: '7-9',
-          animalFee: 14800.0,
-          breedingFee: 9600.5,
-          inOutFee: 5400.25,
-          overtimeFee: 2800.0,
-          serviceFee: 11200.75,
-          otherFee: 2100.0,
-          createTime: '2023-10-05',
-          isConfirmed: false,
-          isSent: false
-        }
-      ],
+      billList: [],
       pagination: {
-        page: 1,
-        size: 10
+        pageNo: 1,
+        pageSize: 10
       },
       total: 3
     };
   },
   methods: {
     handleSizeChange(val) {
-      this.pagination.size = val;
+      this.pagination.pageSize = val;
       this.fetchBillList();
     },
     handleCurrentChange(val) {
-      this.pagination.page = val;
+      this.pagination.pageNo = val;
       this.fetchBillList();
     },
     fetchBillList() {
       this.loading = true;
-      // 这里应该是实际的API调用，获取账单列表数据
-      // this.$api.finance.getBillList(this.pagination).then(res => {
-      //   this.billList = res.data.records;
-      //   this.total = res.data.total;
-      // }).finally(() => {
-      //   this.loading = false;
-      // });
-
-      // 模拟数据加载
-      setTimeout(() => {
-        this.loading = false;
-      }, 500);
+      getConsumeBill(this.pagination)
+        .then(res => {
+          if (res.status === 1) {
+            this.billList = res.data.records;
+            console.log(this.billList);
+            this.total = res.data.total;
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     showGenerateDialog() {
       this.generateDialogVisible = true;
+    },
+    // 格式化日期为 yy-mm-dd
+    formatDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const year = date
+        .getFullYear()
+        .toString()
+        .substr(2); // 获取年份后两位
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date
+        .getDate()
+        .toString()
+        .padStart(2, '0');
+      return `${year}-${month}-${day}`;
     },
     confirmBill(row) {
       this.$confirm('确认此账单信息?', '提示', {

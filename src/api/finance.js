@@ -67,3 +67,12 @@ export function getClassifiedBill(params) {
       params
     })
 }
+
+//消费账单汇总
+export function getConsumeBill(params) {
+    return request({
+      url: '/animal/finance/bill/page',
+      method: 'get',
+      params
+    })
+}
