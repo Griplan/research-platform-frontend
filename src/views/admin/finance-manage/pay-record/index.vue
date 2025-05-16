@@ -17,7 +17,7 @@
         style="width: 100%"
       >
         <el-table-column prop="id" label="付款记录编号" width="110" />
-        <el-table-column prop="accountId" label="账户编号" width="100" />
+        <el-table-column prop="research_group_account_id" label="账户编号" width="100" />
         <el-table-column prop="handler" label="经手人" width="90" />
         <el-table-column prop="amount" label="金额" sortable width="100">
           <template slot-scope="scope">

@@ -19,15 +19,15 @@
         style="width: 100%"
       >
         <el-table-column prop="id" label="退款编号" width="120" />
-        <el-table-column prop="refundDate" label="退款日期" width="110">
+        <el-table-column prop="refund_time" label="退款日期" width="110">
           <template slot-scope="scope">
-            {{ formatDate(scope.row.refundDate) }}
+            {{ formatDate(scope.row.refund_time) }}
           </template>
         </el-table-column>
-        <el-table-column prop="account" label="账户" width="120" />
+        <el-table-column prop="research_group_account_id" label="账户" width="120" />
         <el-table-column prop="amount" label="金额" sortable width="120">
           <template slot-scope="scope">
-            {{ scope.row.amount.toFixed(2) }}
+            {{ scope.row.amount }}
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注" />
@@ -70,9 +70,9 @@
         class="pagination"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pagination.page"
+        :current-page="pagination.pageNo"
         :page-sizes="[10, 20, 30, 50]"
-        :page-size="pagination.size"
+        :page-size="pagination.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         background
@@ -93,6 +93,7 @@
 <script>
 import AddRefundRecord from './components/addRefundRecord.vue';
 import EditRefundRecord from './components/editRefundRecord.vue';
+import { getRefundRecord } from '@/api/finance';
 export default {
   name: 'RefundRecord',
   components: {
@@ -104,41 +105,10 @@ export default {
       loading: false,
       showDialog: false,
       showEditDialog: false,
-      recordList: [
-        {
-          id: 'RF20230001',
-          refundDate: '2023-04-10',
-          account: '科研中心账户-1001',
-          amount: 5000.0,
-          remark: '项目取消退款',
-          status: 1, // 1: 已退款, 2: 待退款, 3: 已取消
-          createTime: '2023-04-05',
-          creator: '李四'
-        },
-        {
-          id: 'RF20230002',
-          refundDate: '2023-07-15',
-          account: '实验室账户-2002',
-          amount: 3250.0,
-          remark: '材料费多付退款',
-          status: 1, // 1: 已退款, 2: 待退款, 3: 已取消
-          createTime: '2023-07-10',
-          creator: '赵六'
-        },
-        {
-          id: 'RF20230003',
-          refundDate: '',
-          account: '动物中心-3003',
-          amount: 8760.0,
-          remark: '服务项目变更退款',
-          status: 2, // 1: 已退款, 2: 待退款, 3: 已取消
-          createTime: '2023-10-01',
-          creator: '孙八'
-        }
-      ],
+      recordList: [],
       pagination: {
-        page: 1,
-        size: 10
+        pageNo: 1,
+        pageSize: 10
       },
       total: 3
     };
@@ -157,27 +127,25 @@ export default {
       this.fetchRecordList();
     },
     handleSizeChange(val) {
-      this.pagination.size = val;
+      this.pagination.pageSize = val;
       this.fetchRecordList();
     },
     handleCurrentChange(val) {
-      this.pagination.page = val;
+      this.pagination.pageNo = val;
       this.fetchRecordList();
     },
     fetchRecordList() {
       this.loading = true;
-      // 这里应该是实际的API调用，获取退款记录列表数据
-      // this.$api.finance.getRefundRecordList(this.pagination).then(res => {
-      //   this.recordList = res.data.records;
-      //   this.total = res.data.total;
-      // }).finally(() => {
-      //   this.loading = false;
-      // });
-
-      // 模拟数据加载
-      setTimeout(() => {
-        this.loading = false;
-      }, 500);
+      getRefundRecord(this.pagination)
+        .then(res => {
+          if (res.status === 1) {
+            this.recordList = res.data.records;
+            this.total = res.data.total;
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     // 格式化日期为 yyyy-mm-dd
     formatDate(dateString) {
