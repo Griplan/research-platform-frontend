@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header-container">
-      <h4>设施账单汇总</h4>
+      <h4>设施账单</h4>
       <div class="button-container">
         <el-button
           type="warning"
@@ -14,11 +14,11 @@
       </div>
     </div>
     <div class="table-container">
-      <div class="fee-title">
+      <!-- <div class="fee-title">
         饲养费:￥{{ fee.feedingFee }}&nbsp;&nbsp;&nbsp;&nbsp;进出费:￥{{
           fee.inOutFee
         }}&nbsp;&nbsp;&nbsp;&nbsp;加班费:￥{{ fee.overtimeFee }}
-      </div>
+      </div> -->
       <el-table
         :data="billList"
         :header-cell-style="{ background: '#fafafa', padding: '8px 0' }"
@@ -28,6 +28,7 @@
         style="width: 100%"
       >
         <el-table-column prop="id" label="账单编号" width="140" />
+        <el-table-column prop="bill_type" label="账单类型" width="100" />
         <el-table-column prop="name" label="中心名称" />
         <el-table-column prop="start_time" label="开始日期" width="120">
           <template slot-scope="scope">
@@ -42,21 +43,20 @@
         <el-table-column prop="year" label="统计年份" width="90" />
         <el-table-column prop="quarter" label="统计季度" width="90" />
         <el-table-column prop="month" label="统计月份" width="90" />
-        <el-table-column prop="breedingFee" label="饲养费" width="120">
+        <el-table-column prop="amount" label="金额" width="120" />
+        <el-table-column prop="create_time" label="创建时间" width="160">
           <template slot-scope="scope">
-            {{ scope.row.breedingFee }}
+            {{ formatDate(scope.row.create_time) }}
           </template>
         </el-table-column>
-        <el-table-column prop="inOutFee" label="进出费" width="120">
+        <el-table-column prop="isRecorded" label="是否已入账" width="100">
           <template slot-scope="scope">
-            {{ scope.row.inOutFee }}
+            <el-tag :type="scope.row.isRecorded ? 'success' : 'info'">
+              {{ scope.row.isRecorded ? '是' : '否' }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="overtimeFee" label="加班费" width="120">
-          <template slot-scope="scope">
-            {{ scope.row.overtimeFee }}
-          </template>
-        </el-table-column>
+        <el-table-column prop="operator" label="入账操作员" width="120" />
       </el-table>
 
       <el-pagination

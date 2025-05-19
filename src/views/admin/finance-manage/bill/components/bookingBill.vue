@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header-container">
-      <h4>预约账单汇总</h4>
+      <h4>其他账单</h4>
       <div class="button-container">
         <el-button size="mini" icon="el-icon-search">查找</el-button>
       </div>
@@ -16,17 +16,17 @@
         style="width: 100%"
       >
         <el-table-column prop="id" label="账单编号" width="90" />
-        <el-table-column prop="type" label="账单类型" width="100" />
-        <el-table-column prop="title" label="账单标题" />
-        <el-table-column prop="centerId" label="中心编号" width="140" />
-        <el-table-column prop="startDate" label="开始日期" width="110">
+        <el-table-column prop="bill_type" label="账单类型" width="100" />
+        <el-table-column prop="name" label="账单标题" />
+        <el-table-column prop="research_group_id" label="中心编号" width="140" />
+        <el-table-column prop="start_time" label="开始日期" width="110">
           <template slot-scope="scope">
-            {{ formatDate(scope.row.startDate) }}
+            {{ formatDate(scope.row.start_time) }}
           </template>
         </el-table-column>
-        <el-table-column prop="endDate" label="截止日期" width="110">
+        <el-table-column prop="end_time" label="截止日期" width="110">
           <template slot-scope="scope">
-            {{ formatDate(scope.row.endDate) }}
+            {{ formatDate(scope.row.end_time) }}
           </template>
         </el-table-column>
         <el-table-column prop="year" label="统计年份" width="90" />
@@ -34,12 +34,12 @@
         <el-table-column prop="month" label="统计月份" width="90" />
         <el-table-column prop="amount" label="金额" sortable width="120">
           <template slot-scope="scope">
-            {{ scope.row.amount.toFixed(2) }}
+            {{ scope.row.amount }}
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="160">
+        <el-table-column prop="create_time" label="创建时间" width="160">
           <template slot-scope="scope">
-            {{ formatDateTime(scope.row.createTime) }}
+            {{ formatDate(scope.row.create_time) }}
           </template>
         </el-table-column>
         <el-table-column prop="isRecorded" label="是否已入账" width="100">
@@ -56,9 +56,9 @@
         class="pagination"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pagination.page"
+        :current-page="pagination.pageNo"
         :page-sizes="[10, 20, 30, 50]"
-        :page-size="pagination.size"
+        :page-size="pagination.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         background
@@ -68,88 +68,42 @@
 </template>
 
 <script>
+import { getClassifiedBill } from '@/api/finance';
 export default {
   name: 'AnimalBill',
   data() {
     return {
       loading: false,
-      billList: [
-        {
-          id: 'BL001',
-          type: '动物账单',
-          title: '2023年第一季度账单',
-          startDate: '2023-01-01',
-          endDate: '2023-03-31',
-          year: '2023',
-          quarter: 'Q1',
-          centerId: '总成本中心',
-          month: '1-3',
-          amount: 12500.0,
-          createTime: '2023-04-05 09:25:30',
-          isRecorded: true,
-          operator: '张三'
-        },
-        {
-          id: 'BL002',
-          type: '动物账单',
-          title: '2023年第二季度账单',
-          startDate: '2023-04-01',
-          endDate: '2023-06-30',
-          year: '2023',
-          centerId: '总成本中心',
-          quarter: 'Q2',
-          month: '4-6',
-          amount: 13600.0,
-          createTime: '2023-07-05 10:15:20',
-          isRecorded: true,
-          operator: '李四'
-        },
-        {
-          id: 'BL003',
-          type: '动物账单',
-          title: '2023年第三季度账单',
-          startDate: '2023-07-01',
-          endDate: '2023-09-30',
-          year: '2023',
-          centerId: '总成本中心',
-          quarter: 'Q3',
-          month: '7-9',
-          amount: 14800.0,
-          createTime: '2023-10-05 14:30:45',
-          isRecorded: false,
-          operator: ''
-        }
-      ],
+      billList: [],
       pagination: {
-        page: 1,
-        size: 10
+        pageNo: 1,
+        pageSize: 10,
+        billType: '其他'
       },
       total: 3
     };
   },
   methods: {
     handleSizeChange(val) {
-      this.pagination.size = val;
+      this.pagination.pageSize = val;
       this.fetchBillList();
     },
     handleCurrentChange(val) {
-      this.pagination.page = val;
+      this.pagination.pageNo = val;
       this.fetchBillList();
     },
     fetchBillList() {
       this.loading = true;
-      // 这里应该是实际的API调用，获取账单列表数据
-      // this.$api.finance.getBillList(this.pagination).then(res => {
-      //   this.billList = res.data.records;
-      //   this.total = res.data.total;
-      // }).finally(() => {
-      //   this.loading = false;
-      // });
-
-      // 模拟数据加载
-      setTimeout(() => {
-        this.loading = false;
-      }, 500);
+      getClassifiedBill(this.pagination)
+        .then(res => {
+          if (res.status === 1) {
+            this.billList = res.data.records;
+            this.total = res.data.total;
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     // 格式化日期为 yyyy-mm-dd
     formatDate(dateString) {
@@ -162,30 +116,6 @@ export default {
         .toString()
         .padStart(2, '0');
       return `${year}-${month}-${day}`;
-    },
-    // 格式化日期时间为 yyyy-mm-dd HH:MM:SS
-    formatDateTime(dateTimeString) {
-      if (!dateTimeString) return '';
-      const date = new Date(dateTimeString);
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date
-        .getDate()
-        .toString()
-        .padStart(2, '0');
-      const hours = date
-        .getHours()
-        .toString()
-        .padStart(2, '0');
-      const minutes = date
-        .getMinutes()
-        .toString()
-        .padStart(2, '0');
-      const seconds = date
-        .getSeconds()
-        .toString()
-        .padStart(2, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
   },
   created() {

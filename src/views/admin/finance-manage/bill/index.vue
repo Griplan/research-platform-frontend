@@ -4,7 +4,7 @@
       <el-tab-pane label="消费账单汇总" name="first">
         <consume-bill />
       </el-tab-pane>
-      <el-tab-pane label="设施账单汇总" name="second">
+      <el-tab-pane label="设施账单" name="second">
         <facility-bill />
       </el-tab-pane>
       <el-tab-pane label="动物账单" name="third">
@@ -19,7 +19,7 @@
       <el-tab-pane label="技术服务账单" name="sixth">
         <tech-service-bill />
       </el-tab-pane>
-      <el-tab-pane label="预约账单" name="seventh">
+      <el-tab-pane label="其他账单" name="seventh">
         <booking-bill />
       </el-tab-pane>
     </el-tabs>
