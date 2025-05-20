@@ -52,13 +52,7 @@
         </el-table-column>
         <el-table-column prop="invoice" label="发票图片附件" width="120">
           <template slot-scope="scope">
-            <el-image
-              v-if="scope.row.invoice"
-              style="width: 30px; height: 30px"
-              :src="scope.row.invoice"
-              :preview-src-list="[scope.row.invoice]"
-            >
-            </el-image>
+            <el-image v-if="scope.row.invoice" style="width: 30px; height: 30px"> </el-image>
             <span v-else>无</span>
           </template>
         </el-table-column>
@@ -122,9 +116,14 @@
       ></el-pagination>
 
       <!-- 新增付款记录 -->
-      <el-dialog title="新增付款记录" :visible.sync="addDialogVisible" width="50%">
-        <el-form :model="form" label-width="120px">
-          <el-form-item label="账户编号">
+      <el-dialog
+        :title="dialogTitle"
+        :visible.sync="addDialogVisible"
+        width="40%"
+        v-loading="loading"
+      >
+        <el-form :model="form" :rules="rules" ref="form" label-width="160px">
+          <el-form-item label="账户编号" prop="research_group_account_id">
             <el-input
               v-model="form.research_group_account_id"
               placeholder="请输入账户编号"
@@ -133,11 +132,11 @@
             >
             </el-input>
           </el-form-item>
-          <el-form-item label="金额">
+          <el-form-item label="金额" prop="amount">
             <el-input v-model="form.amount" placeholder="请输入金额" size="mini" class="keep-25">
             </el-input>
           </el-form-item>
-          <el-form-item label="支付方式">
+          <el-form-item label="支付方式" prop="pay_type">
             <el-input
               v-model="form.pay_type"
               placeholder="请选择支付方式"
@@ -146,7 +145,7 @@
             >
             </el-input>
           </el-form-item>
-          <el-form-item label="发票下载地址">
+          <el-form-item label="发票下载地址" prop="invoice_download_address">
             <el-input
               v-model="form.invoice_download_address"
               placeholder="请输入金额"
@@ -154,41 +153,47 @@
               class="keep-25"
             ></el-input>
           </el-form-item>
-          <el-form-item label="发票日期">
-            <el-date-picker v-model="form.invoice_date" type="date" placeholder="选择日期">
+          <el-form-item label="发票日期" prop="invoice_date">
+            <el-date-picker v-model="form.invoice_date" type="datetime" placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="发票图片附件">
-            <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/">
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
-          </el-form-item>
-          <el-form-item label="备注"
-            ><el-input
-              v-model="form.remark"
-              placeholder="请输入金额"
+          <el-form-item label="发票图片附件" prop="invoice">
+            <el-input
+              v-model="form.invoice"
+              placeholder="请输入发票图片附件"
               size="mini"
               class="keep-25"
-            ></el-input
-          ></el-form-item>
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="备注" prop="remark">
+            <el-input
+              v-model="form.remark"
+              placeholder="请输入备注"
+              size="mini"
+              class="keep-25"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            ><el-button type="primary" @click="submitForm" size="mini">确 定</el-button>
+            <el-button @click="closeAddDialog" size="mini">取 消</el-button>
+          </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-        </div>
       </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import { getPaymentRecord } from '@/api/finance';
+import { getPaymentRecord, addPaymentRecord, updatePaymentRecord } from '@/api/finance';
+import { uploadUrl } from '@/api/public';
 export default {
   name: 'PayRecord',
   data() {
     return {
       loading: false,
+      uploadUrl: uploadUrl,
+      fileList: [],
       recordList: [],
       pagination: {
         pageNo: 1,
@@ -196,15 +201,49 @@ export default {
       },
       total: 3,
       addDialogVisible: false,
+      isEdit: false,
       form: {
-        id: '',
         research_group_account_id: '',
-        handler: '',
         amount: '',
         pay_type: '',
-        invoice_download_address: ''
+        remark: '',
+        invoice_download_address: '',
+        invoice_date: '',
+        invoice: ''
+      },
+      rules: {
+        research_group_account_id: [
+          { required: true, message: '请输入账户编号', trigger: 'blur' },
+          {
+            type: 'number',
+            message: '账户编号必须为数字',
+            trigger: 'blur',
+            transform: value => Number(value)
+          }
+        ],
+        amount: [
+          { required: true, message: '请输入金额', trigger: 'blur' },
+          {
+            type: 'number',
+            message: '金额必须为数字',
+            trigger: 'blur',
+            transform: value => Number(value)
+          }
+        ],
+        pay_type: [{ required: true, message: '请输入支付方式', trigger: 'blur' }],
+        remark: [{ required: true, message: '请输入备注', trigger: 'blur' }],
+        invoice_download_address: [
+          { required: true, message: '请输入发票下载地址', trigger: 'blur' }
+        ],
+        invoice_date: [{ required: true, message: '请选择发票日期', trigger: 'blur' }],
+        invoice: [{ required: true, message: '请输入发票图片附件', trigger: 'blur' }]
       }
     };
+  },
+  computed: {
+    dialogTitle() {
+      return this.isEdit ? '编辑付款记录' : '新增付款记录';
+    }
   },
   methods: {
     handleSizeChange(val) {
@@ -268,9 +307,12 @@ export default {
     },
     // 处理编辑
     handleEdit(row) {
-      this.$message.info(`编辑付款记录：${row.id}`);
-      // 这里应该跳转到编辑页面或打开编辑对话框
-      // this.$router.push(`/finance-manage/pay-record/edit/${row.id}`);
+      this.isEdit = true;
+      this.addDialogVisible = true;
+      this.form = {
+        ...row,
+        invoice_date: row.invoice_date ? new Date(row.invoice_date) : ''
+      };
     },
     // 处理取消
     handleCancel(row) {
@@ -306,7 +348,65 @@ export default {
     },
     // 新增付款记录
     handleAdd() {
+      this.isEdit = false;
       this.addDialogVisible = true;
+      this.form = {
+        research_group_account_id: '',
+        amount: '',
+        pay_type: '',
+        remark: '',
+        invoice_download_address: '',
+        invoice_date: '',
+        invoice: ''
+      };
+    },
+    closeAddDialog() {
+      this.addDialogVisible = false;
+      this.$refs.form.resetFields();
+    },
+    // 格式化日期时间
+    formatDateTime(date) {
+      if (!date) return '';
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      const seconds = String(d.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    },
+    submitForm() {
+      console.log(this.form);
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.loading = true;
+          const submitData = {
+            ...this.form,
+            invoice_date: this.formatDateTime(this.form.invoice_date)
+          };
+          const request = this.isEdit
+            ? updatePaymentRecord(submitData)
+            : addPaymentRecord(submitData);
+          request
+            .then(res => {
+              if (res.status === 1) {
+                this.$message.success(this.isEdit ? '编辑成功' : '添加成功');
+                this.fetchRecordList();
+                this.addDialogVisible = false;
+              }
+            })
+            .catch(err => {
+              this.$message.error(err.msg);
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        } else {
+          this.$message.error('请填写完整的表单信息');
+          return false;
+        }
+      });
     }
   },
   created() {

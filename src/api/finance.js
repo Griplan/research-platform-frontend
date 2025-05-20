@@ -85,3 +85,12 @@ export function getPaymentRecord(params) {
       params
     })
 }
+//新增付款记录
+export function addPaymentRecord(data) {
+    return request({
+      url: '/animal/finance/payment',
+      method: 'post',
+      data
+    })
+}
+
