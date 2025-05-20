@@ -82,27 +82,23 @@
         <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
             <div class="button-container">
-              <el-button
-                type="primary"
-                size="mini"
-                @click="handleEdit(scope.row)"
-                :disabled="!canEdit(scope.row)"
-              >
-                编辑
-              </el-button>
-              <el-button
-                type="danger"
-                size="mini"
-                @click="handleCancel(scope.row)"
-                :disabled="!canCancel(scope.row)"
-              >
-                取消
-              </el-button>
+              <template v-if="scope.row.status === 0">
+                <el-button type="primary" size="mini" @click="handleEdit(scope.row)">
+                  编辑
+                </el-button>
+                <el-button type="warning" size="mini" @click="handleIn(scope.row)">
+                  入账
+                </el-button>
+              </template>
+              <template v-if="scope.row.status === 1">
+                <el-button type="warning" size="mini" @click="handleCancel(scope.row)">
+                  取消入账
+                </el-button>
+              </template>
             </div>
           </template>
         </el-table-column>
       </el-table>
-
       <el-pagination
         class="pagination"
         @size-change="handleSizeChange"
@@ -185,7 +181,13 @@
 </template>
 
 <script>
-import { getPaymentRecord, addPaymentRecord, updatePaymentRecord } from '@/api/finance';
+import {
+  getPaymentRecord,
+  addPaymentRecord,
+  editPaymentRecord,
+  inPayRecord,
+  cancelInPayRecord
+} from '@/api/finance';
 import { uploadUrl } from '@/api/public';
 export default {
   name: 'PayRecord',
@@ -284,25 +286,17 @@ export default {
       switch (status) {
         case 1:
           return 'success';
-        case 2:
+        case 0:
           return 'warning';
-        case 3:
-          return 'danger';
-        default:
-          return 'info';
       }
     },
     // 获取状态文本
     getStatusText(status) {
       switch (status) {
         case 1:
-          return '已付款';
-        case 2:
-          return '待付款';
-        case 3:
-          return '已取消';
-        default:
-          return '未知';
+          return '已入账';
+        case 0:
+          return '未入账';
       }
     },
     // 处理编辑
@@ -314,37 +308,43 @@ export default {
         invoice_date: row.invoice_date ? new Date(row.invoice_date) : ''
       };
     },
-    // 处理取消
-    handleCancel(row) {
-      this.$confirm('确认取消该付款记录?', '提示', {
+    // 处理入账
+    handleIn(row) {
+      this.$confirm('确认入账该付款记录?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          // 这里应该是实际的API调用，取消付款记录
-          // this.$api.finance.cancelPayRecord(row.id).then(res => {
-          //   if (res.code === 200) {
-          //     this.$message.success('付款记录已取消');
-          //     this.fetchRecordList();
-          //   }
-          // });
-
-          // 模拟操作成功
-          row.status = 3; // 设置为已取消
-          this.$message.success('付款记录已取消');
+          inPayRecord(row.id).then(res => {
+            if (res.status === 1) {
+              this.$message.success('付款记录已入账');
+              this.fetchRecordList();
+            }
+          });
         })
         .catch(() => {
           this.$message.info('已取消操作');
         });
     },
-    // 判断是否可以编辑
-    canEdit(row) {
-      return row.status === 2; // 只有待付款状态可以编辑
-    },
-    // 判断是否可以取消
-    canCancel(row) {
-      return row.status === 2; // 只有待付款状态可以取消
+    // 处理取消
+    handleCancel(row) {
+      this.$confirm('确认取消入账该记录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          cancelInPayRecord(row.id).then(res => {
+            if (res.status === 1) {
+              this.$message.success('付款记录已取消入账');
+              this.fetchRecordList();
+            }
+          });
+        })
+        .catch(() => {
+          this.$message.info('已取消操作');
+        });
     },
     // 新增付款记录
     handleAdd() {
@@ -386,7 +386,7 @@ export default {
             invoice_date: this.formatDateTime(this.form.invoice_date)
           };
           const request = this.isEdit
-            ? updatePaymentRecord(submitData)
+            ? editPaymentRecord(submitData)
             : addPaymentRecord(submitData);
           request
             .then(res => {

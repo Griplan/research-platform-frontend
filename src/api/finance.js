@@ -88,9 +88,34 @@ export function getPaymentRecord(params) {
 //新增付款记录
 export function addPaymentRecord(data) {
     return request({
-      url: '/animal/finance/payment',
+      url: '/animal/finance/payment/add',
+      method: 'post',
+      data
+    })
+}
+//编辑付款记录
+export function editPaymentRecord(data) {
+    return request({
+      url: '/animal/finance/payment/update',
       method: 'post',
       data
     })
 }
 
+//入账
+export function inPayRecord(data) {
+    return request({
+      url: '/animal/finance/payment/postToAccount',
+      method: 'post',
+      data
+    })
+}
+
+//取消入账
+export function cancelInPayRecord(data) {
+    return request({
+      url: '/animal/finance/payment/cancel',
+      method: 'post',
+      data
+    })
+}
