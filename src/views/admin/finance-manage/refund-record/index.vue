@@ -90,6 +90,7 @@
     <edit-refund-record
       v-if="showEditDialog"
       @close="hideEditDialog"
+      :row="editRow"
       @success="handleEditSuccess"
     />
   </div>
@@ -192,6 +193,9 @@ export default {
       this.showEditDialog = true;
       this.editRow = row;
     },
+    handleEditSuccess() {
+      this.fetchRecordList();
+    },
     // 隐藏编辑对话框
     hideEditDialog() {
       this.showEditDialog = false;
@@ -261,14 +265,6 @@ export default {
             this.loading = false;
           });
       });
-    },
-    // 判断是否可以编辑
-    canEdit(row) {
-      return row.status === 2; // 只有待退款状态可以编辑
-    },
-    // 判断是否可以取消
-    canCancel(row) {
-      return row.status === 2; // 只有待退款状态可以取消
     }
   },
   created() {

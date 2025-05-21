@@ -154,3 +154,11 @@ export function cancelInRefundRecord(params) {
       params
     })
 }
+//修改退款记录
+export function editRefundRecord(data) {
+    return request({
+      url: '/animal/finance/refundRecord/update',
+      method: 'post',
+      data
+    })
+}

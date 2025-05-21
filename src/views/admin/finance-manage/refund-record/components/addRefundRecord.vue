@@ -14,7 +14,7 @@
       :validate-on-rule-change="false"
       size="small"
     >
-      <el-form-item label="账户编号" prop="account">
+      <el-form-item label="账户编号" prop="research_group_account_id">
         <el-input
           v-model="form.research_group_account_id"
           placeholder="请输入账户编号"
@@ -64,9 +64,10 @@ export default {
         remark: ''
       },
       rules: {
-        research_group_id: [{ required: true, message: '请输入账户编号', trigger: 'blur' }],
+        research_group_account_id: [{ required: true, message: '请输入账户编号', trigger: 'blur' }],
         amount: [{ required: true, message: '请输入退款金额', trigger: 'blur' }],
-        refund_time: [{ required: true, message: '请选择退款日期', trigger: 'change' }]
+        refund_time: [{ required: true, message: '请选择退款日期', trigger: 'change' }],
+        remark: [{ required: true, message: '请输入退款备注信息', trigger: 'blur' }]
       }
     };
   },
