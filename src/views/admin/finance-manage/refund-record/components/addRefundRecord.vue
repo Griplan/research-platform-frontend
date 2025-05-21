@@ -16,7 +16,7 @@
     >
       <el-form-item label="账户编号" prop="account">
         <el-input
-          v-model="form.research_group_id"
+          v-model="form.research_group_account_id"
           placeholder="请输入账户编号"
           class="keep-40"
         ></el-input>

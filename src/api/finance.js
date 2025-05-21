@@ -128,3 +128,20 @@ export function addRefundRecord(data) {
       data
     })
 }
+
+//退款记录入账
+export function inRefundRecord(params) {
+    return request({
+      url: '/animal/finance/refundRecord/postToAccount',
+      method: 'post',
+      params
+    })
+}
+//删除退款记录
+export function deleteRefundRecord(params) {
+    return request({
+      url: '/animal/finance/refundRecord/delete',
+      method: 'delete',
+      params
+    })
+  }

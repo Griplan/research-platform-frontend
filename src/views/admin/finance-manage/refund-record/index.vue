@@ -44,7 +44,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="create_by" label="创建人" width="100" />
-        <el-table-column label="操作" width="150" fixed="right">
+        <el-table-column label="操作" width="250" fixed="right">
           <template slot-scope="scope">
             <div class="button-container">
               <template v-if="scope.row.status === 0">
@@ -54,10 +54,16 @@
                 <el-button type="warning" size="mini" @click="handleIn(scope.row)">
                   入账
                 </el-button>
+                <el-button type="danger" size="mini" @click="handleDelete(scope.row)">
+                  删除
+                </el-button>
               </template>
               <template v-if="scope.row.status === 1">
                 <el-button type="warning" size="mini" @click="handleCancel(scope.row)">
                   取消入账
+                </el-button>
+                <el-button type="danger" size="mini" @click="handleDelete(scope.row)">
+                  删除
                 </el-button>
               </template>
             </div>
@@ -92,7 +98,7 @@
 <script>
 import AddRefundRecord from './components/addRefundRecord.vue';
 import EditRefundRecord from './components/editRefundRecord.vue';
-import { allRefundRecord } from '@/api/finance';
+import { allRefundRecord, inRefundRecord, deleteRefundRecord } from '@/api/finance';
 export default {
   name: 'RefundRecord',
   components: {
@@ -184,6 +190,50 @@ export default {
     // 隐藏编辑对话框
     hideEditDialog() {
       this.showEditDialog = false;
+    },
+    // 处理入账
+    handleIn(row) {
+      this.$confirm('确认入账该退款记录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true;
+        inRefundRecord({ id: row.id })
+          .then(res => {
+            if (res.status === 1) {
+              this.$message.success('退款记录已入账');
+              this.fetchRecordList();
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      });
+    },
+    // 处理删除
+    handleDelete(row) {
+      this.$confirm('确认删除该退款记录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true;
+        deleteRefundRecord({ id: row.id })
+          .then(res => {
+            if (res.status === 1) {
+              this.$message.success('退款记录已删除');
+              this.fetchRecordList();
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      });
     },
     // 处理取消
     handleCancel(row) {
