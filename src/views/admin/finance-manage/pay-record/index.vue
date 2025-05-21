@@ -316,7 +316,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          inPayRecord(row.id).then(res => {
+          inPayRecord({ id: row.id }).then(res => {
             if (res.status === 1) {
               this.$message.success('付款记录已入账');
               this.fetchRecordList();
@@ -335,15 +335,15 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          cancelInPayRecord(row.id).then(res => {
+          cancelInPayRecord({ id: row.id }).then(res => {
             if (res.status === 1) {
               this.$message.success('付款记录已取消入账');
               this.fetchRecordList();
             }
           });
         })
-        .catch(() => {
-          this.$message.info('已取消操作');
+        .catch(err => {
+          this.$message.error(err.msg);
         });
     },
     // 新增付款记录

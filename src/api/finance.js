@@ -103,19 +103,19 @@ export function editPaymentRecord(data) {
 }
 
 //入账
-export function inPayRecord(data) {
+export function inPayRecord(params) {
     return request({
       url: '/animal/finance/payment/postToAccount',
       method: 'post',
-      data
+      params
     })
 }
 
 //取消入账
-export function cancelInPayRecord(data) {
+export function cancelInPayRecord(params) {
     return request({
       url: '/animal/finance/payment/cancel',
       method: 'post',
-      data
+      params
     })
 }
