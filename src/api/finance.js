@@ -162,3 +162,13 @@ export function editRefundRecord(data) {
       data
     })
 }
+
+//消费记录查询
+export function getConsumeRecord(params) {
+    return request({
+      url: '/animal/finance/consumptionRecords/page',
+      method: 'get',
+      params
+    })
+}
+
