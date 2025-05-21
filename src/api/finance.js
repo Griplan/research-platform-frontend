@@ -119,3 +119,12 @@ export function cancelInPayRecord(params) {
       params
     })
 }
+
+//新增退款记录
+export function addRefundRecord(data) {
+    return request({
+      url: '/animal/finance/refundRecord/add',
+      method: 'post',
+      data
+    })
+}

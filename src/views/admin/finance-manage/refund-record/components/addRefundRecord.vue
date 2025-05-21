@@ -15,21 +15,18 @@
       size="small"
     >
       <el-form-item label="账户编号" prop="account">
-        <el-select v-model="form.account" placeholder="请选择账户" filterable class="keep-40">
-          <el-option
-            v-for="item in accountOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
+        <el-input
+          v-model="form.research_group_id"
+          placeholder="请输入账户编号"
+          class="keep-40"
+        ></el-input>
       </el-form-item>
       <el-form-item label="金额" prop="amount">
         <el-input v-model="form.amount" placeholder="请输入退款金额" class="keep-40"></el-input>
       </el-form-item>
-      <el-form-item label="退款日期" prop="refundDate">
+      <el-form-item label="退款日期" prop="refund_time">
         <el-date-picker
-          v-model="form.refundDate"
+          v-model="form.refund_time"
           type="date"
           placeholder="选择退款日期"
           value-format="yyyy-MM-dd"
@@ -46,7 +43,7 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="handleSubmit" :loading="loading">保 存 </el-button>
+        <el-button type="primary" @click="handleSubmit" :loading="loading">确 认 </el-button>
         <el-button @click="handleClose">取 消</el-button>
       </el-form-item>
     </el-form>
@@ -54,27 +51,23 @@
 </template>
 
 <script>
+import { addRefundRecord } from '@/api/finance';
 export default {
   name: 'AddRefundRecord',
   data() {
     return {
       loading: false,
       form: {
-        account: '',
+        research_group_id: '',
         amount: 0,
-        refundDate: '',
+        refund_time: '',
         remark: ''
       },
       rules: {
-        account: [{ required: true, message: '请选择账户', trigger: 'change' }],
+        research_group_id: [{ required: true, message: '请输入账户编号', trigger: 'blur' }],
         amount: [{ required: true, message: '请输入退款金额', trigger: 'blur' }],
-        refundDate: [{ required: true, message: '请选择退款日期', trigger: 'change' }]
-      },
-      accountOptions: [
-        { value: 'ACC-001', label: '科研中心账户-1001' },
-        { value: 'ACC-002', label: '实验室账户-2002' },
-        { value: 'ACC-003', label: '动物中心-3003' }
-      ]
+        refund_time: [{ required: true, message: '请选择退款日期', trigger: 'change' }]
+      }
     };
   },
   methods: {
@@ -86,32 +79,19 @@ export default {
       this.$refs.refundForm.validate(valid => {
         if (valid) {
           this.loading = true;
-
-          // 构建提交的数据
-          const submitData = {
-            ...this.form,
-            status: 2 // 2: 待退款
-          };
-
-          // 模拟API调用
-          setTimeout(() => {
-            this.loading = false;
-
-            // 这里是实际的API调用
-            // this.$api.finance.addRefundRecord(submitData).then(res => {
-            //   if (res.code === 200) {
-            //     this.$message.success('退款记录创建成功');
-            //     this.$emit('success');
-            //     this.handleClose();
-            //   }
-            // }).finally(() => {
-            //   this.loading = false;
-            // });
-
-            this.$message.success('退款记录创建成功');
-            this.$emit('success');
-            this.handleClose();
-          }, 1000);
+          addRefundRecord(this.form)
+            .then(res => {
+              if (res.status === 1) {
+                this.$message.success('退款记录创建成功');
+                this.$emit('success');
+                this.handleClose();
+              } else {
+                this.$message.error(res.msg);
+              }
+            })
+            .finally(() => {
+              this.loading = false;
+            });
         }
       });
     }

@@ -38,30 +38,29 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="110">
+        <el-table-column prop="create_time" label="创建时间" width="110">
           <template slot-scope="scope">
-            {{ formatDate(scope.row.createTime) }}
+            {{ formatDate(scope.row.create_time) }}
           </template>
         </el-table-column>
-        <el-table-column prop="creator" label="创建人" width="100" />
+        <el-table-column prop="create_by" label="创建人" width="100" />
         <el-table-column label="操作" width="150" fixed="right">
           <template slot-scope="scope">
-            <el-button
-              type="primary"
-              size="mini"
-              @click="handleEdit(scope.row)"
-              :disabled="!canEdit(scope.row)"
-            >
-              编辑
-            </el-button>
-            <el-button
-              type="danger"
-              size="mini"
-              @click="handleCancel(scope.row)"
-              :disabled="!canCancel(scope.row)"
-            >
-              取消
-            </el-button>
+            <div class="button-container">
+              <template v-if="scope.row.status === 0">
+                <el-button type="primary" size="mini" @click="handleEdit(scope.row)">
+                  编辑
+                </el-button>
+                <el-button type="warning" size="mini" @click="handleIn(scope.row)">
+                  入账
+                </el-button>
+              </template>
+              <template v-if="scope.row.status === 1">
+                <el-button type="warning" size="mini" @click="handleCancel(scope.row)">
+                  取消入账
+                </el-button>
+              </template>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -93,7 +92,7 @@
 <script>
 import AddRefundRecord from './components/addRefundRecord.vue';
 import EditRefundRecord from './components/editRefundRecord.vue';
-import { getRefundRecord } from '@/api/finance';
+import { allRefundRecord } from '@/api/finance';
 export default {
   name: 'RefundRecord',
   components: {
@@ -136,7 +135,7 @@ export default {
     },
     fetchRecordList() {
       this.loading = true;
-      getRefundRecord(this.pagination)
+      allRefundRecord(this.pagination)
         .then(res => {
           if (res.status === 1) {
             this.recordList = res.data.records;
@@ -164,25 +163,17 @@ export default {
       switch (status) {
         case 1:
           return 'success';
-        case 2:
+        case 0:
           return 'warning';
-        case 3:
-          return 'danger';
-        default:
-          return 'info';
       }
     },
     // 获取状态文本
     getStatusText(status) {
       switch (status) {
         case 1:
-          return '已退款';
-        case 2:
-          return '待退款';
-        case 3:
-          return '已取消';
-        default:
-          return '未知';
+          return '已入账';
+        case 0:
+          return '未入账';
       }
     },
     // 处理编辑
