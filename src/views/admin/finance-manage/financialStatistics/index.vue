@@ -9,20 +9,20 @@
                 <div class="card-header">概况</div>
                 <div class="card-body">
                   <el-form label-width="100px" size="small">
-                    <el-form-item label="总账户数" prop="totalAccounts">
-                      {{ statistics.totalAccounts }}
+                    <el-form-item label="总账户数" prop="account_number">
+                      {{ statistics.account_number }}
                     </el-form-item>
-                    <el-form-item label="欠费账户数" prop="overdueAccounts">
-                      {{ statistics.overdueAccounts }}
+                    <el-form-item label="欠费账户数" prop="overdue_account_number">
+                      {{ statistics.overdue_account_number }}
                     </el-form-item>
-                    <el-form-item label="付款总额" prop="totalPayment">
-                      {{ statistics.totalPayment }}
+                    <el-form-item label="付款总额" prop="payment_amount">
+                      {{ statistics.payment_amount }}
                     </el-form-item>
-                    <el-form-item label="退款总额" prop="totalRefund">
-                      {{ statistics.totalRefund }}
+                    <el-form-item label="退款总额" prop="refund_amount">
+                      {{ statistics.refund_amount }}
                     </el-form-item>
-                    <el-form-item label="消费总额" prop="totalConsumption">
-                      {{ statistics.totalConsumption }}
+                    <el-form-item label="消费总额" prop="consumption_amount">
+                      {{ statistics.consumption_amount }}
                     </el-form-item>
                   </el-form>
                 </div>
@@ -61,44 +61,27 @@
               size="small"
               style="width: 100%"
             >
-              <el-table-column prop="id" label="消费记录编号" width="110" />
-              <el-table-column prop="consumeDate" label="消费日期" width="100">
+              <el-table-column prop="research_group_id" label="账户编号" width="110" />
+              <el-table-column prop="name" label="账户名称" />
+              <el-table-column prop="note" label="备注" />
+              <el-table-column prop="debt_amount" label="可透支额度" sortable />
+              <el-table-column prop="amount" label="账户余额" sortable />
+              <el-table-column prop="frozen_amount" label="冻结金额" sortable />
+              <el-table-column prop="inter_amount" label="可消费额度" sortable />
+              <el-table-column prop="created_at" label="创建时间" width="100">
                 <template slot-scope="scope">
-                  {{ formatDate(scope.row.consumeDate) }}
+                  {{ formatDate(scope.row.created_at) }}
                 </template>
               </el-table-column>
-              <el-table-column prop="accountId" label="账户编号" width="100" />
-              <el-table-column prop="handler" label="经手人" width="90" />
-              <el-table-column prop="amount" label="金额" sortable width="90">
+              <el-table-column prop="updated_at" label="修改时间" width="100">
                 <template slot-scope="scope">
-                  {{ scope.row.amount.toFixed(2) }}
+                  {{ formatDate(scope.row.updated_at) }}
                 </template>
               </el-table-column>
-              <el-table-column prop="category" label="费用类别" width="100" />
-              <el-table-column prop="payMethod" label="结算方式" width="100" />
-              <el-table-column prop="remark" label="备注" />
-              <el-table-column prop="status" label="状态标识" width="90">
-                <template slot-scope="scope">
-                  <el-tag :type="getStatusType(scope.row.status)">
-                    {{ getStatusText(scope.row.status) }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="createTime" label="创建时间" width="100">
-                <template slot-scope="scope">
-                  {{ formatDate(scope.row.createTime) }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="creator" label="创建人" width="90" />
               <el-table-column label="操作" width="150" fixed="right">
                 <template slot-scope="scope">
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="handleEdit(scope.row)"
-                    :disabled="!canEdit(scope.row)"
-                  >
-                    编辑
+                  <el-button type="primary" size="mini" @click="handleSend(scope.row)">
+                    发送
                   </el-button>
                 </template>
               </el-table-column>
@@ -108,9 +91,9 @@
               class="pagination"
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page="pagination.page"
+              :current-page="pagination.pageNo"
               :page-sizes="[10, 20, 30, 50]"
-              :page-size="pagination.size"
+              :page-size="pagination.pageSize"
               layout="total, sizes, prev, pager, next, jumper"
               :total="total"
               background
@@ -123,141 +106,78 @@
 </template>
 
 <script>
+import { getBaseStatistics, getDebtStatistics, getOverdueAccountNumber } from '@/api/finance';
 export default {
   components: {},
   data() {
     return {
       activeName: 'first',
       loading: false,
-      recordList: [
-        {
-          id: 'CR20230001',
-          consumeDate: '2023-04-01',
-          accountId: 'ACC001',
-          handler: '张三',
-          amount: 12500.0,
-          category: '动物费',
-          payMethod: '银行转账',
-          remark: '第一季度动物采购费用',
-          status: 1, // 1: 已结算, 2: 待结算, 3: 已取消
-          createTime: '2023-03-30',
-          creator: '李四'
-        },
-        {
-          id: 'CR20230002',
-          consumeDate: '2023-07-05',
-          accountId: 'ACC002',
-          handler: '王五',
-          amount: 8600.0,
-          category: '饲养费',
-          payMethod: '支付宝',
-          remark: '二季度饲养支出',
-          status: 1, // 1: 已结算, 2: 待结算, 3: 已取消
-          createTime: '2023-07-01',
-          creator: '赵六'
-        },
-        {
-          id: 'CR20230003',
-          consumeDate: '2023-10-02',
-          accountId: 'ACC003',
-          handler: '钱七',
-          amount: 14800.0,
-          category: '技术服务费',
-          payMethod: '微信支付',
-          remark: '三季度技术服务支出',
-          status: 2, // 1: 已结算, 2: 待结算, 3: 已取消
-          createTime: '2023-09-30',
-          creator: '孙八'
-        }
-      ],
+      recordList: [],
       pagination: {
-        page: 1,
-        size: 10
+        pageNo: 1,
+        pageSize: 10
       },
-      total: 3,
+      total: 0,
       // 统计数据
       statistics: {
-        totalAccounts: 25,
-        overdueAccounts: 3,
-        totalPayment: 256800.5,
-        totalRefund: 12500.0,
-        totalConsumption: 189650.75
+        account_number: 0,
+        overdue_account_number: 0,
+        payment_amount: 0,
+        refund_amount: 0,
+        consumption_amount: 0
       }
     };
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
-      // 根据标签类型加载不同数据
-      this.fetchRecordList();
+      switch (tab.name) {
+        case 'first':
+          this.fetchBaseStatistics();
+          break;
+        case 'second':
+          this.fetchDebtStatistics();
+          break;
+      }
+    },
+    //欠费统计
+    fetchDebtStatistics() {
+      this.loading = true;
+      getDebtStatistics(this.pagination)
+        .then(res => {
+          if (res.status === 1) {
+            this.recordList = res.data;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    //基础统计
+    fetchBaseStatistics() {
+      this.loading = true;
+      getBaseStatistics()
+        .then(res => {
+          if (res.status === 1) {
+            this.statistics = res.data;
+            this.total = res.data.overdue_account_number;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     handleSizeChange(val) {
-      this.pagination.size = val;
+      this.pagination.pageSize = val;
       this.fetchRecordList();
     },
     handleCurrentChange(val) {
-      this.pagination.page = val;
+      this.pagination.pageNo = val;
       this.fetchRecordList();
-    },
-    fetchRecordList() {
-      this.loading = true;
-      // 这里应该是实际的API调用，获取消费记录列表数据
-      // 可以根据activeName过滤不同类别的记录
-      // const params = {
-      //   ...this.pagination,
-      //   category: this.getCategory(this.activeName)
-      // };
-      // this.$api.finance.getConsumeRecordList(params).then(res => {
-      //   this.recordList = res.data.records;
-      //   this.total = res.data.total;
-      // }).finally(() => {
-      //   this.loading = false;
-      // });
-
-      // 模拟数据加载
-      setTimeout(() => {
-        this.loading = false;
-      }, 500);
-    },
-    // 获取状态类型
-    getStatusType(status) {
-      switch (status) {
-        case 1:
-          return 'success';
-        case 2:
-          return 'warning';
-        case 3:
-          return 'danger';
-        default:
-          return 'info';
-      }
-    },
-    // 获取状态文本
-    getStatusText(status) {
-      switch (status) {
-        case 1:
-          return '已结算';
-        case 2:
-          return '待结算';
-        case 3:
-          return '已取消';
-        default:
-          return '未知';
-      }
-    },
-    // 处理编辑
-    handleEdit(row) {
-      this.$message.info(`编辑消费记录：${row.id}`);
-      // 这里应该跳转到编辑页面或打开编辑对话框
-      // this.$router.push(`/finance-manage/consume-record/edit/${row.id}`);
-    },
-    // 判断是否可以编辑
-    canEdit(row) {
-      return row.status === 2; // 只有待结算状态可以编辑
-    },
-    // 判断是否可以取消
-    canCancel(row) {
-      return row.status === 2; // 只有待结算状态可以取消
     },
     // 格式化日期为 yyyy-mm-dd
     formatDate(dateString) {
@@ -271,32 +191,6 @@ export default {
         .padStart(2, '0');
       return `${year}-${month}-${day}`;
     },
-    // 获取账户状态类型
-    getAccountStatusType(status) {
-      switch (status) {
-        case 1:
-          return 'success';
-        case 2:
-          return 'warning';
-        case 3:
-          return 'danger';
-        default:
-          return 'info';
-      }
-    },
-    // 获取账户状态文本
-    getAccountStatusText(status) {
-      switch (status) {
-        case 1:
-          return '正常';
-        case 2:
-          return '冻结';
-        case 3:
-          return '停用';
-        default:
-          return '未知';
-      }
-    },
     // 处理发送
     handleSend(row) {
       this.$message.info(`发送账户通知到: ${row.accountName}`);
@@ -309,7 +203,7 @@ export default {
     }
   },
   created() {
-    this.fetchRecordList();
+    this.fetchBaseStatistics();
   }
 };
 </script>

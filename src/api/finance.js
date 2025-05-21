@@ -179,3 +179,28 @@ export function deleteConsumeRecord(params) {
       params
     })
 }
+//财务统计 基础统计
+export function getBaseStatistics(params) {
+    return request({
+      url: '/animal/finance/statistics/basic',
+      method: 'get',
+      params
+    })
+}
+
+//财务统计 欠费统计
+export function getDebtStatistics(params) {
+    return request({
+      url: '/animal/finance/statistics/overdueAccount',
+      method: 'get',
+      params
+    })
+}
+//获得欠费账户总数
+export function getOverdueAccountNumber(params) {
+    return request({
+      url: '/animal/finance/statistics/overdueAccountCount',
+      method: 'get',
+      params
+    })
+}
