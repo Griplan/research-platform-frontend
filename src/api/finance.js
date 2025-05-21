@@ -171,4 +171,11 @@ export function getConsumeRecord(params) {
       params
     })
 }
-
+//删除消费记录
+export function deleteConsumeRecord(params) {
+    return request({
+      url: '/animal/finance/consumptionRecords/delete',
+      method: 'delete',
+      params
+    })
+}

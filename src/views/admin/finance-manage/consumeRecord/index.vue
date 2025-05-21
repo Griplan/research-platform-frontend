@@ -13,7 +13,9 @@
         <div class="header-container">
           <h4>消费记录</h4>
           <div class="button-container">
-            <el-button size="mini" icon="el-icon-plus" type="warning">新增</el-button>
+            <!-- <el-button size="mini" icon="el-icon-plus" type="warning" @click="handleAdd"
+              >新增</el-button
+            > -->
             <el-button size="mini" icon="el-icon-search">查找</el-button>
           </div>
         </div>
@@ -33,7 +35,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="research_group_account_id" label="账户编号" width="100" />
-            <el-table-column prop="handler" label="经手人" width="90" />
+            <el-table-column prop="update_by" label="经手人" width="90" />
             <el-table-column prop="amount" label="金额" sortable width="90">
               <template slot-scope="scope">
                 {{ scope.row.amount.toFixed(2) }}
@@ -57,11 +59,11 @@
             <el-table-column prop="user_name" label="创建人" width="90" />
             <el-table-column label="操作" width="150" fixed="right">
               <template slot-scope="scope">
-                <el-button type="primary" size="mini" @click="handleEdit(scope.row)">
+                <!-- <el-button type="primary" size="mini" @click="handleEdit(scope.row)">
                   编辑
-                </el-button>
+                </el-button> -->
                 <el-button type="danger" size="mini" @click="handleCancel(scope.row)">
-                  取消
+                  删除
                 </el-button>
               </template>
             </el-table-column>
@@ -81,13 +83,23 @@
         </div>
       </div>
     </el-tabs>
+    <add-dialog
+      v-if="addDialogVisible"
+      :loading="loading"
+      @submit="handleSubmitAdd"
+      @close="handleCloseAddDialog"
+    />
   </div>
 </template>
 
 <script>
-import { getConsumeRecord } from '@/api/finance';
+import { getConsumeRecord, deleteConsumeRecord } from '@/api/finance';
+import AddDialog from './components/AddDialog.vue';
+
 export default {
-  components: {},
+  components: {
+    AddDialog
+  },
   data() {
     return {
       activeName: 'first',
@@ -97,7 +109,8 @@ export default {
         pageNo: 1,
         pageSize: 10
       },
-      total: 0
+      total: 0,
+      addDialogVisible: false
     };
   },
   methods: {
@@ -153,12 +166,8 @@ export default {
       switch (status) {
         case 1:
           return 'success';
-        case 2:
+        case 0:
           return 'warning';
-        case 3:
-          return 'danger';
-        default:
-          return 'info';
       }
     },
     // 获取状态文本
@@ -166,12 +175,8 @@ export default {
       switch (status) {
         case 1:
           return '已结算';
-        case 2:
+        case 0:
           return '待结算';
-        case 3:
-          return '已取消';
-        default:
-          return '未知';
       }
     },
     // 处理编辑
@@ -188,17 +193,14 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          // 这里应该是实际的API调用，取消消费记录
-          // this.$api.finance.cancelConsumeRecord(row.id).then(res => {
-          //   if (res.code === 200) {
-          //     this.$message.success('消费记录已取消');
-          //     this.fetchRecordList();
-          //   }
-          // });
-
-          // 模拟操作成功
-          row.status = 3; // 设置为已取消
-          this.$message.success('消费记录已取消');
+          deleteConsumeRecord({ id: row.id }).then(res => {
+            if (res.status == 1) {
+              this.$message.success('删除成功');
+              this.fetchRecordList();
+            } else {
+              this.$message.error(res.msg);
+            }
+          });
         })
         .catch(() => {
           this.$message.info('已取消操作');
@@ -215,6 +217,20 @@ export default {
         .toString()
         .padStart(2, '0');
       return `${year}-${month}-${day}`;
+    },
+    handleAdd() {
+      this.addDialogVisible = true;
+    },
+    handleSubmitAdd(formData) {
+      this.loading = true;
+      // 这里添加提交表单的逻辑
+      console.log('提交的表单数据:', formData);
+      this.addDialogVisible = false;
+      this.$message.success('添加成功');
+      this.fetchRecordList();
+    },
+    handleCloseAddDialog() {
+      this.addDialogVisible = false;
     }
   },
   created() {
