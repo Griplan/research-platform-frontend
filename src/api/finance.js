@@ -144,4 +144,13 @@ export function deleteRefundRecord(params) {
       method: 'delete',
       params
     })
-  }
+}
+  
+//退款记录取消入账
+export function cancelInRefundRecord(params) {
+    return request({
+      url: '/animal/finance/refundRecord/cancel',
+      method: 'post',
+      params
+    })
+}

@@ -98,7 +98,12 @@
 <script>
 import AddRefundRecord from './components/addRefundRecord.vue';
 import EditRefundRecord from './components/editRefundRecord.vue';
-import { allRefundRecord, inRefundRecord, deleteRefundRecord } from '@/api/finance';
+import {
+  allRefundRecord,
+  inRefundRecord,
+  deleteRefundRecord,
+  cancelInRefundRecord
+} from '@/api/finance';
 export default {
   name: 'RefundRecord',
   components: {
@@ -241,23 +246,21 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      })
-        .then(() => {
-          // 这里应该是实际的API调用，取消退款记录
-          // this.$api.finance.cancelRefundRecord(row.id).then(res => {
-          //   if (res.code === 200) {
-          //     this.$message.success('退款记录已取消');
-          //     this.fetchRecordList();
-          //   }
-          // });
-
-          // 模拟操作成功
-          row.status = 3; // 设置为已取消
-          this.$message.success('退款记录已取消');
-        })
-        .catch(() => {
-          this.$message.info('已取消操作');
-        });
+      }).then(() => {
+        this.loading = true;
+        cancelInRefundRecord({ id: row.id })
+          .then(res => {
+            if (res.status === 1) {
+              this.$message.success('退款记录已取消');
+              this.fetchRecordList();
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      });
     },
     // 判断是否可以编辑
     canEdit(row) {
