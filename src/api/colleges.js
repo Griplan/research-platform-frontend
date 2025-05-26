@@ -201,7 +201,7 @@ export function addDoor(data) {
 //编辑
 export function editDoor(data) {
   return request({
-    url: '/animal/fac/door/uptate',
+    url: '/animal/fac/door/update',
     method: 'post',
     data
   })

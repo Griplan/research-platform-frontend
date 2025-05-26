@@ -48,17 +48,25 @@
       ></el-pagination>
     </div>
     <add-doors v-if="addDialogVisible" :loading="loading" @close="handleClose" />
+    <edit-doors
+      v-if="editDialogVisible"
+      :loading="loading"
+      :data="editData"
+      @close="handleEditClose"
+    />
   </div>
 </template>
 
 <script>
 import { getDoorsList, addDoor, editDoor, delDoor } from '@/api/colleges';
 import AddDoors from './components/addDoors.vue';
+import EditDoors from './components/editDoors.vue';
 
 export default {
   name: 'doorsManage',
   components: {
-    AddDoors
+    AddDoors,
+    EditDoors
   },
   data() {
     return {
@@ -69,7 +77,9 @@ export default {
       total: 0,
       loading: false,
       recordList: [],
-      addDialogVisible: false
+      addDialogVisible: false,
+      editDialogVisible: false,
+      editData: {}
     };
   },
   methods: {
@@ -106,6 +116,10 @@ export default {
           .catch(() => this.$message.error(res.msg));
       });
     },
+    handleEdit(row) {
+      this.editDialogVisible = true;
+      this.editData = row;
+    },
     handleSizeChange(val) {
       this.pagination.pageSize = val;
       this.getRecordList();
@@ -119,6 +133,10 @@ export default {
     },
     handleClose() {
       this.addDialogVisible = false;
+      this.getRecordList();
+    },
+    handleEditClose() {
+      this.editDialogVisible = false;
       this.getRecordList();
     }
   },
