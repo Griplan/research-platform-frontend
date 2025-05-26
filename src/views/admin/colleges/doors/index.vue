@@ -88,6 +88,24 @@ export default {
           this.loading = false;
         });
     },
+    handleDelete(row) {
+      this.$confirm('确定删除该房门吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        delDoor({ id: row.id })
+          .then(res => {
+            if (res.status === 1) {
+              this.$message.success(res.msg);
+              this.getRecordList();
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .catch(() => this.$message.error(res.msg));
+      });
+    },
     handleSizeChange(val) {
       this.pagination.pageSize = val;
       this.getRecordList();
