@@ -181,3 +181,36 @@ export function moveCage(data) {
     data
   })
 }
+
+//房门管理
+export function getDoorsList(params) {
+  return request({
+    url: '/animal/fac/door/page',
+    method: 'get',
+    params
+  })
+}
+//新增
+export function addDoor(data) {
+  return request({
+    url: '/animal/fac/door/add',
+    method: 'post',
+    data
+  })  
+}
+//编辑
+export function editDoor(data) {
+  return request({
+    url: '/animal/fac/door/uptate',
+    method: 'post',
+    data
+  })
+}
+//删除
+export function delDoor(params) {
+  return request({
+    url: '/animal/fac/door/delete',
+    method: 'delete',
+    params
+  })
+}

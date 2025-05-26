@@ -201,6 +201,17 @@ const colleges = {
       node: 'platform',
       activeClass: 'platform'
     },
+    },
+    //
+  {
+    path: '/admin/colleges/doors',
+    name: 'doorsManage',
+    component: () => import('@/views/admin/colleges/doors/index'),
+    meta: {
+      title: '房门管理',
+      node: 'platform',
+      activeClass: 'platform'
+    }
   }
   ]
 }
