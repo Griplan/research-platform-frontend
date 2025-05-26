@@ -14,9 +14,9 @@
         style="width: 100%"
       >
         <el-table-column type="selection" width="80" />
-        <el-table-column prop="note" label="备注">
+        <el-table-column prop="name" label="备注">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.note" size="mini" class="keep-30" />
+            <el-input v-model="scope.row.name" size="mini" class="keep-30" />
           </template>
         </el-table-column>
         <el-table-column prop="defaultCategory" label="默认费用分类" width="400">
@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { getAllBillType } from '@/api/finance';
 export default {
   name: 'CostCenter',
   data() {
@@ -87,26 +88,11 @@ export default {
   methods: {
     handleSizeChange(val) {
       this.pagination.size = val;
-      this.fetchCenterList();
+      this.fetchAllBillType();
     },
     handleCurrentChange(val) {
       this.pagination.page = val;
-      this.fetchCenterList();
-    },
-    fetchCenterList() {
-      this.loading = true;
-      // 这里应该是实际的API调用，获取成本中心列表数据
-      // this.$api.finance.getCostCenterList(this.pagination).then(res => {
-      //   this.centerList = res.data.records;
-      //   this.total = res.data.total;
-      // }).finally(() => {
-      //   this.loading = false;
-      // });
-
-      // 模拟数据加载
-      setTimeout(() => {
-        this.loading = false;
-      }, 500);
+      this.fetchAllBillType();
     },
     // 处理删除
     handleDelete(row) {
@@ -115,10 +101,25 @@ export default {
     // 保存所有
     handleSaveAll() {
       this.$message.info('保存所有');
+    },
+    // 查询所有账单类型
+    fetchAllBillType() {
+      this.loading = true;
+      getAllBillType(this.pagination)
+        .then(res => {
+          if (res.status === 1) {
+            this.settingList = res.data;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     }
   },
   created() {
-    this.fetchCenterList();
+    this.fetchAllBillType();
   }
 };
 </script>

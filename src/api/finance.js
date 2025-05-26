@@ -204,3 +204,11 @@ export function getOverdueAccountNumber(params) {
       params
     })
 }
+//查询所有账单类型
+export function getAllBillType(params) {
+    return request({
+      url: '/animal/finance/billType/all',
+      method: 'get',
+      params
+    })
+}
