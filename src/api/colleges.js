@@ -231,4 +231,19 @@ export function delUserPermission(data) {
     data
   })
 }
-//
+//课题组权限查询
+export function getGroupPermission(params) {
+  return request({
+    url: '/animal/fac/groupPermission/page',
+    method: 'get',
+    params
+  })
+}
+//删除
+export function delGroupPermission(data) {
+  return request({
+    url: '/animal/fac/groupPermission/deleteORrestore',
+    method: 'post',
+    data
+  })
+}

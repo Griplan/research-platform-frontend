@@ -2,7 +2,7 @@
   <div class="container">
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" class="custom-tabs">
       <el-tab-pane label="用户权限" name="first"> <user-permisson /> </el-tab-pane>
-      <el-tab-pane label="课题组权限" name="second"> </el-tab-pane>
+      <el-tab-pane label="课题组权限" name="second"> <group-permission /> </el-tab-pane>
       <el-tab-pane label="设施权限规则" name="third"> </el-tab-pane>
       <el-tab-pane label="规则白名单" name="fourth"> </el-tab-pane>
       <el-tab-pane label="权限审核" name="fifth"> </el-tab-pane>
@@ -12,9 +12,11 @@
 
 <script>
 import UserPermisson from './components/userPermisson.vue';
+import GroupPermission from './components/groupPermission.vue';
 export default {
   components: {
-    UserPermisson
+    UserPermisson,
+    GroupPermission
   },
   data() {
     return {

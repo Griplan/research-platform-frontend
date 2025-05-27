@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="header-container">
-      <h4>用户权限</h4>
+      <h4>课题组权限</h4>
       <div class="button-container">
         <el-button size="mini" icon="el-icon-search">查找</el-button>
       </div>
@@ -10,16 +10,14 @@
       <el-table
         :header-cell-style="{ background: '#fafafa', padding: '8px 0' }"
         v-loading="loading"
+        :data="tableData"
         border
         size="small"
         style="width: 100%"
       >
-        <el-table-column prop="id" label="会员标识" width="120" />
-        <el-table-column prop="name" label="全名" width="110" />
-        <el-table-column prop="research_group_account_id" label="成员标识" width="120" />
-        <el-table-column prop="remark" label="门禁卡号" />
-        <el-table-column prop="remark" label="生物特征" />
-        <el-table-column prop="remark" label="第一个权限" />
+        <el-table-column prop="research_group_id" label="课题组ID" width="120" />
+        <el-table-column prop="research_group_name" label="课题组名称" />
+        <el-table-column prop="first_door" label="第一个权限" />
 
         <el-table-column label="操作" width="250" fixed="right">
           <template slot-scope="scope">
@@ -51,6 +49,7 @@
 </template>
 
 <script>
+import { getGroupPermission, delGroupPermission } from '@/api/colleges';
 export default {
   name: 'doorsManage',
   data() {
@@ -59,7 +58,9 @@ export default {
         pageNo: 1,
         pageSize: 10
       },
-      total: 0
+      loading: false,
+      total: 0,
+      tableData: []
     };
   },
   methods: {
@@ -70,9 +71,47 @@ export default {
     handleCurrentChange(val) {
       this.pagination.pageNo = val;
       this.fetchRecordList();
+    },
+    handleDelete(row) {
+      this.$confirm('确定删除该课题组权限吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true;
+        delGroupPermission({ id: row.id })
+          .then(res => {
+            if (res.status == 1) {
+              this.$message.success('删除成功');
+              this.fetchRecordList();
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      });
+    },
+    fetchRecordList() {
+      this.loading = true;
+      getGroupPermission(this.pagination)
+        .then(res => {
+          if (res.status == 1) {
+            this.tableData = res.data.records;
+            this.total = res.data.total;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     }
   },
-  created() {}
+  created() {
+    this.fetchRecordList();
+  }
 };
 </script>
 
