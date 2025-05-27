@@ -45,13 +45,18 @@
         background
       ></el-pagination>
     </div>
+    <edit-group-permission v-if="editDialogVisible" :data="editData" @close="handleEditClose" />
   </div>
 </template>
 
 <script>
 import { getGroupPermission, delGroupPermission } from '@/api/colleges';
+import EditGroupPermission from './editGroupPermission.vue';
 export default {
   name: 'doorsManage',
+  components: {
+    EditGroupPermission
+  },
   data() {
     return {
       pagination: {
@@ -60,7 +65,9 @@ export default {
       },
       loading: false,
       total: 0,
-      tableData: []
+      tableData: [],
+      editDialogVisible: false,
+      editData: {}
     };
   },
   methods: {
@@ -107,6 +114,13 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+    handleEdit(row) {
+      this.editDialogVisible = true;
+      this.editData = row;
+    },
+    handleEditClose() {
+      this.editDialogVisible = false;
     }
   },
   created() {

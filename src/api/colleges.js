@@ -254,6 +254,14 @@ export function getGroupPermission(params) {
     params
   })
 }
+//更新课题组权限
+export function updateGroupPermission(data) {
+  return request({
+    url: '/animal/fac/groupPermission/update',
+    method: 'post',
+    data
+  })
+}
 //删除
 export function delGroupPermission(data) {
   return request({
