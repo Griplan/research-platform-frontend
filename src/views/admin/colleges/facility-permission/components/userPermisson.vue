@@ -48,13 +48,18 @@
         background
       ></el-pagination>
     </div>
+    <edit-permission v-if="editDialogVisible" :data="editData" @close="handleEditClose" />
   </div>
 </template>
 
 <script>
 import { getUserPermission, delUserPermission } from '@/api/colleges';
+import EditPermission from './editPermission.vue';
 export default {
   name: 'doorsManage',
+  components: {
+    EditPermission
+  },
   data() {
     return {
       pagination: {
@@ -63,7 +68,9 @@ export default {
       },
       total: 0,
       loading: false,
-      tableData: []
+      tableData: [],
+      editDialogVisible: false,
+      editData: {}
     };
   },
   methods: {
@@ -82,6 +89,13 @@ export default {
           this.loading = false;
         });
     },
+    handleEdit(row) {
+      this.editDialogVisible = true;
+      this.editData = row;
+    },
+    handleEditClose() {
+      this.editDialogVisible = false;
+    },
     handleSizeChange(val) {
       this.pagination.pageSize = val;
       this.fetchRecordList();
@@ -97,16 +111,18 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true;
-        delUserPermission({ id: row.id }).then(res => {
-          if (res.status == 1) {
-            this.$message.success('删除成功');
-            this.fetchRecordList();
-          } else {
-            this.$message.error(res.msg);
-          }
-        }).finally(() => {
-          this.loading = false;
-        });
+        delUserPermission({ id: row.id })
+          .then(res => {
+            if (res.status == 1) {
+              this.$message.success('删除成功');
+              this.fetchRecordList();
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       });
     }
   },

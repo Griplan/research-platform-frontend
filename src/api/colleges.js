@@ -223,10 +223,25 @@ export function getUserPermission(params) {
     params
   })
 }
+//根据id查询用户权限/animal/fac/userPermission/{id}
+export function getUserPermissionById(id) {
+  return request({
+    url: '/animal/fac/userPermission/' + id,
+    method: 'get',
+  })
+}
 //删除
 export function delUserPermission(data) {
   return request({
     url: '/animal/fac/userPermission/deleteORrestore',
+    method: 'post',
+    data
+  })
+}
+//更新用户权限
+export function updateUserPermission(data) {
+  return request({
+    url: '/animal/fac/userPermission/update',
     method: 'post',
     data
   })
