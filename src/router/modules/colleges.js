@@ -212,7 +212,17 @@ const colleges = {
       node: 'platform',
       activeClass: 'platform'
     }
-  }
+    },
+    {
+      path: '/admin/colleges/facility-permisson',
+      name: 'facilityPermisson',
+      component: () => import('@/views/admin/colleges/facility-permission/index'),
+      meta: {
+        title: '设施权限',
+        node: 'platform',
+        activeClass: 'platform'
+      }
+   }
   ]
 }
 

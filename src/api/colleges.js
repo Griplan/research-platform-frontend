@@ -214,3 +214,21 @@ export function delDoor(params) {
     params
   })
 }
+//权限管理 
+//用户权限查询
+export function getUserPermission(params) {
+  return request({
+    url: '/animal/fac/userPermission/page',
+    method: 'get',
+    params
+  })
+}
+//删除
+export function delUserPermission(data) {
+  return request({
+    url: '/animal/fac/userPermission/deleteORrestore',
+    method: 'post',
+    data
+  })
+}
+//
