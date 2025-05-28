@@ -26,14 +26,16 @@
         </el-table-column>
         <el-table-column prop="inORout" label="进出状态" width="100">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.inORout === '进' ? 'success' : 'warning'">
-              {{ scope.row.inORout }}
+            <el-tag :type="scope.row.inORout === 1 ? 'success' : 'warning'">
+              {{ scope.row.inORout === 1 ? '进' : '出' }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="160">
           <template slot-scope="scope">
-            <el-button type="text" size="mini" icon="el-icon-view">查看路径</el-button>
+            <el-button type="text" size="mini" icon="el-icon-view" @click="handleView(scope.row)"
+              >查看路径</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -49,6 +51,24 @@
         :total="total"
         background
       ></el-pagination>
+      <el-dialog :visible.sync="dialogVisible" title="路径" width="50%">
+        <div class="path-container">
+          <el-table :data="pathList" border stripe>
+            <el-table-column property="user_name" label="全名" width="150"></el-table-column>
+            <el-table-column property="door_place" label="设施名称"></el-table-column>
+            <el-table-column property="inORout" label="进出状态" width="150">
+              <template slot-scope="scope">
+                {{ scope.row.inORout === 1 ? '进' : '出' }}
+              </template>
+            </el-table-column>
+            <el-table-column property="create_time" label="进出时间" width="200">
+              <template slot-scope="scope">
+                {{ formatDate(scope.row.create_time) }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -65,7 +85,9 @@ export default {
       },
       loading: false,
       total: 0,
-      recordList: []
+      recordList: [],
+      dialogVisible: false,
+      pathList: []
     };
   },
   methods: {
@@ -87,6 +109,14 @@ export default {
     handleCurrentChange(val) {
       this.pagination.pageNo = val;
       this.fetchRecordList();
+    },
+    handleSizeChange(val) {
+      this.pagination.pageSize = val;
+      this.fetchRecordList();
+    },
+    handleView(row) {
+      this.dialogVisible = true;
+      this.pathList = [row];
     },
     // 格式化日期为 yyyy-mm-dd
     formatDate(dateString) {
