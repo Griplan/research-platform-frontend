@@ -270,3 +270,11 @@ export function delGroupPermission(data) {
     data
   })
 }
+//设施进出记录
+export function getFacilityRecord(params) {
+  return request({
+    url: '/animal/fac/accessRecords/page',
+    method: 'get',
+    params
+  })
+}

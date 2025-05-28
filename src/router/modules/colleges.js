@@ -222,6 +222,16 @@ const colleges = {
         node: 'platform',
         activeClass: 'platform'
       }
+   },
+   {
+    path: '/admin/colleges/in-out-record',
+    name: 'inOutRecord',
+    component: () => import('@/views/admin/colleges/in-out-record/index'),
+    meta: {
+      title: '进出记录',
+      node: 'platform',
+      activeClass: 'platform'
+    }
    }
   ]
 }

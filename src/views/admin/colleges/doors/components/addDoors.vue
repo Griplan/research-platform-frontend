@@ -28,9 +28,9 @@
           size="mini"
           class="keep-25"
         >
-          <el-option label="男" :value="'男'"></el-option>
-          <el-option label="女" :value="'女'"></el-option>
-          <el-option label="无" :value="'无'"></el-option>
+          <el-option label="男" :value="1"></el-option>
+          <el-option label="女" :value="2"></el-option>
+          <el-option label="无" :value="0"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="描述" prop="description">
