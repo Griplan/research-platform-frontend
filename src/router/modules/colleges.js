@@ -7,9 +7,9 @@ const colleges = {
   name: 'adminCollege',
   meta: {
     title: '设施管理',
-    icon: 'platform',
+    icon: 'facility-manage',
     node: 'platform',
-    activeClass: 'platform'
+    activeClass: 'facility'
   },
   alwaysShow: true,
   children: [{
@@ -19,7 +19,7 @@ const colleges = {
     meta: {
       title: '院区管理',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
   },
   {
@@ -29,7 +29,7 @@ const colleges = {
     meta: {
       title: '楼宇管理',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
   },
   {
@@ -39,7 +39,7 @@ const colleges = {
     meta: {
       title: '实验室管理',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
   },
   {
@@ -50,7 +50,7 @@ const colleges = {
     meta: {
       title: '添加院区',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
   },
   {
@@ -61,7 +61,7 @@ const colleges = {
     meta: {
       title: '修改院区',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
   }
     ,
@@ -73,7 +73,7 @@ const colleges = {
     meta: {
       title: '添加楼宇',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
   }
     ,
@@ -85,7 +85,7 @@ const colleges = {
     meta: {
       title: '修改楼宇',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
   },
 
@@ -98,7 +98,7 @@ const colleges = {
     meta: {
       title: '绑定人员',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
   },
 
@@ -111,7 +111,7 @@ const colleges = {
     meta: {
       title: '修改绑定人员',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     },
   },
 
@@ -125,7 +125,7 @@ const colleges = {
     meta: {
       title: '编辑危险源',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
   },
 
@@ -138,7 +138,7 @@ const colleges = {
     meta: {
       title: '编辑危险源',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     },
   },
 
@@ -150,7 +150,7 @@ const colleges = {
     meta: {
       title: '添加实验室',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     },
   },
 
@@ -164,7 +164,7 @@ const colleges = {
     meta: {
       title: '修改实验室',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     },
   },
 
@@ -177,7 +177,7 @@ const colleges = {
     meta: {
       title: '笼架管理',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     },
   },
   {
@@ -188,7 +188,7 @@ const colleges = {
     meta: {
       title: '添加笼架',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     },
   },
   {
@@ -199,7 +199,7 @@ const colleges = {
     meta: {
       title: '修改笼架',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     },
     },
     //
@@ -210,7 +210,7 @@ const colleges = {
     meta: {
       title: '房门管理',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
     },
     {
@@ -220,7 +220,7 @@ const colleges = {
       meta: {
         title: '设施权限',
         node: 'platform',
-        activeClass: 'platform'
+        activeClass: 'facility'
       }
    },
    {
@@ -230,7 +230,7 @@ const colleges = {
     meta: {
       title: '进出记录',
       node: 'platform',
-      activeClass: 'platform'
+      activeClass: 'facility'
     }
    }
   ]

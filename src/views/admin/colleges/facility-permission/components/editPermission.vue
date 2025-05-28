@@ -22,12 +22,6 @@
         >
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="立即生效" prop="is_effective">
-        <el-radio-group v-model="form.is_effective" size="mini">
-          <el-radio :label="1">是</el-radio>
-          <el-radio :label="0">否</el-radio>
-        </el-radio-group>
-      </el-form-item>
       <el-form-item label="权限项">
         <el-transfer
           v-model="form.permissions"
@@ -65,14 +59,12 @@ export default {
         user_name: '',
         start_date: '',
         end_date: '',
-        is_effective: 0,
         permissions: []
       },
       loading: false,
       rules: {
         start_date: [{ required: true, message: '请选择开始日期', trigger: 'change' }],
         end_date: [{ required: true, message: '请选择截止日期', trigger: 'change' }],
-        is_effective: [{ required: true, message: '请选择是否立即生效', trigger: 'change' }],
         permissions: [{ required: true, message: '请选择权限项', trigger: 'change' }]
       },
       permissionList: []
@@ -111,6 +103,7 @@ export default {
         if (valid) {
           updateUserPermission({
             id: this.data.id,
+            user_id: this.data.user_id,
             user_name: this.form.user_name,
             start_time: this.form.start_date,
             end_time: this.form.end_date,

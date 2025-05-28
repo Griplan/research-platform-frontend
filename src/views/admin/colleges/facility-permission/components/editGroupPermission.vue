@@ -22,8 +22,8 @@
         >
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="立即生效" prop="is_take_effect">
-        <el-radio-group v-model="form.is_take_effect" size="mini">
+      <el-form-item label="立即生效" prop="take_effect">
+        <el-radio-group v-model="form.take_effect" size="mini">
           <el-radio :label="1">是</el-radio>
           <el-radio :label="0">否</el-radio>
         </el-radio-group>
@@ -64,14 +64,14 @@ export default {
         research_group_name: '',
         start_date: '',
         end_date: '',
-        is_take_effect: 0,
+        take_effect: 0,
         permissions: []
       },
       loading: false,
       rules: {
         start_date: [{ required: true, message: '请选择开始日期', trigger: 'change' }],
         end_date: [{ required: true, message: '请选择截止日期', trigger: 'change' }],
-        is_take_effect: [{ required: true, message: '请选择是否立即生效', trigger: 'change' }],
+        take_effect: [{ required: true, message: '请选择是否立即生效', trigger: 'change' }],
         permissions: [{ required: true, message: '请选择权限项', trigger: 'change' }]
       },
       permissionList: []
@@ -79,7 +79,6 @@ export default {
   },
   created() {
     // 如果有传入的数据，则初始化表单
-    console.log(this.data, '11111111111');
     this.init();
   },
   methods: {
@@ -103,11 +102,12 @@ export default {
         if (valid) {
           updateGroupPermission({
             id: this.data.id,
+            research_group_id: this.data.research_group_id,
             research_group_name: this.form.research_group_name,
             start_time: this.form.start_date,
             end_time: this.form.end_date,
             doors: this.form.permissions,
-            is_take_effect: this.form.is_take_effect
+            is_take_effect: this.form.take_effect
           })
             .then(res => {
               if (res.status === 1) {

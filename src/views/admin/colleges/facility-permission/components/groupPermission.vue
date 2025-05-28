@@ -121,6 +121,7 @@ export default {
     },
     handleEditClose() {
       this.editDialogVisible = false;
+      this.fetchRecordList();
     }
   },
   created() {

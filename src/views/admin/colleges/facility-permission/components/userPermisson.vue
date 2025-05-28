@@ -95,6 +95,7 @@ export default {
     },
     handleEditClose() {
       this.editDialogVisible = false;
+      this.fetchRecordList();
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val;
