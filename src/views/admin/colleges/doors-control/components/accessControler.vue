@@ -3,7 +3,9 @@
     <div class="header-container">
       <h4>门禁控制器</h4>
       <div class="button-container">
-        <el-button size="mini" icon="el-icon-plus" type="primary">新增</el-button>
+        <el-button size="mini" icon="el-icon-plus" type="primary" @click="handleAdd"
+          >新增</el-button
+        >
         <el-button size="mini" icon="el-icon-search">查找</el-button>
       </div>
     </div>
@@ -14,7 +16,7 @@
         border
         size="small"
         style="width: 100%"
-        :data="tableData"
+        :data="doorList"
       >
         <el-table-column prop="id" label="门禁编号" width="120" />
         <el-table-column prop="brand" label="门禁品牌类型" width="120" />
@@ -26,7 +28,9 @@
         <el-table-column prop="first_door" label="第一个房门" />
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" icon="el-icon-edit">编辑</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleEdit(scope.row)"
+              >编辑</el-button
+            >
             <el-button type="danger" size="mini" icon="el-icon-delete">删除</el-button>
           </template>
         </el-table-column>
@@ -43,31 +47,43 @@
         :total="total"
         background
       ></el-pagination>
+      <edit-door v-if="editDialogVisible" :data="editData" @close="handleEditClose" />
+      <add-door v-if="addDialogVisible" @close="handleAddClose" />
     </div>
   </div>
 </template>
 
 <script>
 import { getAccessControler } from '@/api/colleges';
+import EditDoor from './editDoor.vue';
+import AddDoor from './addDoor.vue';
 export default {
+  name: 'AccessControler',
+  components: {
+    EditDoor,
+    AddDoor
+  },
   data() {
     return {
       pagination: {
         pageNo: 1,
         pageSize: 10
       },
-      total: 0,
       loading: false,
-      tableData: []
+      total: 0,
+      doorList: [],
+      editDialogVisible: false,
+      editData: null,
+      addDialogVisible: false
     };
   },
   methods: {
-    fetchRecordList() {
+    fetchDoorList() {
       this.loading = true;
       getAccessControler(this.pagination)
         .then(res => {
           if (res.status === 1) {
-            this.tableData = res.data.records;
+            this.doorList = res.data.records;
             this.total = res.data.total;
           } else {
             this.$message.error(res.msg);
@@ -77,29 +93,33 @@ export default {
           this.loading = false;
         });
     },
-    handleSizeChange(val) {
-      this.pagination.pageSize = val;
-      this.fetchRecordList();
-    },
     handleCurrentChange(val) {
       this.pagination.pageNo = val;
-      this.fetchRecordList();
+      this.fetchDoorList();
     },
-    // 格式化日期为 yyyy-mm-dd
-    formatDate(dateString) {
-      if (!dateString) return '-';
-      const date = new Date(dateString);
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date
-        .getDate()
-        .toString()
-        .padStart(2, '0');
-      return `${year}-${month}-${day}`;
+    handleSizeChange(val) {
+      this.pagination.pageSize = val;
+      this.fetchDoorList();
+    },
+    handleEdit(row) {
+      this.editData = { ...row };
+      this.editDialogVisible = true;
+    },
+    handleEditClose() {
+      this.editDialogVisible = false;
+      this.editData = null;
+      this.fetchDoorList();
+    },
+    handleAdd() {
+      this.addDialogVisible = true;
+    },
+    handleAddClose() {
+      this.addDialogVisible = false;
+      this.fetchDoorList();
     }
   },
   created() {
-    this.fetchRecordList();
+    this.fetchDoorList();
   }
 };
 </script>
