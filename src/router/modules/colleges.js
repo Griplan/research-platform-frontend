@@ -242,6 +242,16 @@ const colleges = {
         node: 'platform',
         activeClass: 'facility'
       }
+    },
+    {
+      path: '/admin/colleges/doors-control',
+      name: 'doorsControl',
+      component: () => import('@/views/admin/colleges/doors-control/index'),
+      meta: {
+        title: '门禁控制',
+        node: 'platform',
+        activeClass: 'facility'
+      }
     }
   ]
 }

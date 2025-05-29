@@ -294,3 +294,12 @@ export function getCustomerInOutStatistic(params) {
     params
   })
 }
+
+//门禁控制器
+export function getAccessControler(params) {
+  return request({
+    url: '/animal/fac/accessControl/page',
+    method: 'get',
+    params
+  })
+}
