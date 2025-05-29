@@ -232,7 +232,17 @@ const colleges = {
       node: 'platform',
       activeClass: 'facility'
     }
-   }
+    },
+    {
+      path: '/admin/colleges/in-out-statistic',
+      name: 'inOutStatistic',
+      component: () => import('@/views/admin/colleges/in-out-statistic/index'),
+      meta: {
+        title: '进出统计',
+        node: 'platform',
+        activeClass: 'facility'
+      }
+    }
   ]
 }
 

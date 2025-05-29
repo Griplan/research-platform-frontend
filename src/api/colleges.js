@@ -278,3 +278,19 @@ export function getFacilityRecord(params) {
     params
   })
 }
+//进出统计
+export function getGroupInOutStatistic(params) {
+  return request({
+    url: '/animal/fac/accessRecordsStatistics/groupPage',
+    method: 'get',
+    params
+  })
+}
+//按客户统计
+export function getCustomerInOutStatistic(params) {
+  return request({
+    url: '/animal/fac/accessRecordsStatistics/userPage',
+    method: 'get',
+    params
+  })
+}
