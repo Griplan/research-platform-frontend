@@ -303,3 +303,27 @@ export function getAccessControler(params) {
     params
   })
 }
+//新增
+export function addAccessControler(data) {
+  return request({
+    url: '/animal/fac/accessControl/adds',
+    method: 'post',
+    data
+  })
+}
+//编辑
+export function editAccessControler(data) {
+  return request({
+    url: '/animal/fac/accessControl/update',
+    method: 'post',
+    data
+  })
+}
+//删除
+export function delAccessControler(params) {
+  return request({
+    url: '/animal/fac/accessControl/delete',
+    method: 'delete',
+    params
+  })
+}
